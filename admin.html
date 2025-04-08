@@ -243,6 +243,52 @@
             width: 100px;
         }
 
+        .delete-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ff6666;
+        }
+
+        .submit-btn {
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+        }
+
+        .setting-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 10px;
+            margin-top: 5px;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .page-title {
                 font-size: 20px;
@@ -332,72 +378,112 @@
 
                 <!-- Game Settings -->
                 <div class="tab-content active" id="gameTab">
-                    <div class="setting-item">
-                        <label class="setting-label">Pipe Gap</label>
-                        <input type="number" class="setting-input" placeholder="150">
-                    </div>
-                    <div class="setting-item">
-                        <label class="setting-label">Gravity</label>
-                        <input type="number" class="setting-input" placeholder="0.5">
-                    </div>
-                    <div class="setting-item">
-                        <label class="setting-label">Game Speed</label>
-                        <input type="number" class="setting-input" placeholder="1">
-                    </div>
+                    <form id="gameSettingsForm" onsubmit="submitGameSettings(event)">
+                        <div class="setting-item">
+                            <label class="setting-label">Pipe Gap</label>
+                            <input type="number" class="setting-input" name="pipeGap" placeholder="150" required min="100" max="300">
+                            <div class="error-message">Please enter a value between 100 and 300</div>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">Gravity</label>
+                            <input type="number" class="setting-input" name="gravity" placeholder="0.5" required step="0.1" min="0.1" max="2">
+                            <div class="error-message">Please enter a value between 0.1 and 2</div>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">Game Speed</label>
+                            <input type="number" class="setting-input" name="gameSpeed" placeholder="1" required step="0.1" min="0.5" max="2">
+                            <div class="error-message">Please enter a value between 0.5 and 2</div>
+                        </div>
+                        <button type="submit" class="submit-btn">Save Game Settings</button>
+                    </form>
                 </div>
 
                 <!-- Bet Settings -->
                 <div class="tab-content" id="betTab">
-                    <div id="betInputs">
-                        <div class="setting-item">
-                            <label class="setting-label">Bet 1</label>
-                            <input type="number" class="setting-input" placeholder="0.1 BNB" step="0.01">
+                    <form id="betSettingsForm" onsubmit="submitBetSettings(event)">
+                        <div id="betInputs">
+                            <div class="setting-row">
+                                <div class="setting-item">
+                                    <label class="setting-label">Bet 1</label>
+                                    <input type="number" class="setting-input" name="bet1" placeholder="0.1 BNB" step="0.01" required min="0.01">
+                                    <div class="error-message">Please enter a valid bet amount</div>
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-item">
+                                    <label class="setting-label">Bet 2</label>
+                                    <input type="number" class="setting-input" name="bet2" placeholder="0.08 BNB" step="0.01" required min="0.01">
+                                    <div class="error-message">Please enter a valid bet amount</div>
+                                </div>
+                                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-item">
+                                    <label class="setting-label">Bet 3</label>
+                                    <input type="number" class="setting-input" name="bet3" placeholder="0.06 BNB" step="0.01" required min="0.01">
+                                    <div class="error-message">Please enter a valid bet amount</div>
+                                </div>
+                                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-item">
+                                    <label class="setting-label">Bet 4</label>
+                                    <input type="number" class="setting-input" name="bet4" placeholder="0.04 BNB" step="0.01" required min="0.01">
+                                    <div class="error-message">Please enter a valid bet amount</div>
+                                </div>
+                                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-item">
+                                    <label class="setting-label">Bet 5</label>
+                                    <input type="number" class="setting-input" name="bet5" placeholder="0.02 BNB" step="0.01" required min="0.01">
+                                    <div class="error-message">Please enter a valid bet amount</div>
+                                </div>
+                                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
+                            </div>
                         </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Bet 2</label>
-                            <input type="number" class="setting-input" placeholder="0.08 BNB" step="0.01">
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Bet 3</label>
-                            <input type="number" class="setting-input" placeholder="0.06 BNB" step="0.01">
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Bet 4</label>
-                            <input type="number" class="setting-input" placeholder="0.04 BNB" step="0.01">
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Bet 5</label>
-                            <input type="number" class="setting-input" placeholder="0.02 BNB" step="0.01">
-                        </div>
-                    </div>
-                    <button class="add-btn" onclick="addBetInput()">Add Bet</button>
+                        <button type="button" class="add-btn" onclick="addBetInput()">Add Bet</button>
+                        <button type="submit" class="submit-btn">Save Bet Settings</button>
+                    </form>
                 </div>
 
                 <!-- Distribution Settings -->
                 <div class="tab-content" id="distributionTab">
-                    <div id="distributionInputs">
-                        <div class="distribution-item">
-                            <input type="text" class="distribution-input" placeholder="Top 1" readonly>
-                            <input type="number" class="distribution-input" placeholder="50%" value="50">
+                    <form id="distributionSettingsForm" onsubmit="submitDistributionSettings(event)">
+                        <div id="distributionInputs">
+                            <div class="distribution-item">
+                                <input type="text" class="distribution-input" value="Top 1" readonly>
+                                <input type="number" class="distribution-input" name="dist1" placeholder="50%" value="50" required min="0" max="100">
+                                <div class="error-message">Please enter a value between 0 and 100</div>
+                            </div>
+                            <div class="distribution-item">
+                                <input type="text" class="distribution-input" value="Top 2" readonly>
+                                <input type="number" class="distribution-input" name="dist2" placeholder="20%" value="20" required min="0" max="100">
+                                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
+                                <div class="error-message">Please enter a value between 0 and 100</div>
+                            </div>
+                            <div class="distribution-item">
+                                <input type="text" class="distribution-input" value="Top 3" readonly>
+                                <input type="number" class="distribution-input" name="dist3" placeholder="15%" value="15" required min="0" max="100">
+                                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
+                                <div class="error-message">Please enter a value between 0 and 100</div>
+                            </div>
+                            <div class="distribution-item">
+                                <input type="text" class="distribution-input" value="Top 4" readonly>
+                                <input type="number" class="distribution-input" name="dist4" placeholder="10%" value="10" required min="0" max="100">
+                                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
+                                <div class="error-message">Please enter a value between 0 and 100</div>
+                            </div>
+                            <div class="distribution-item">
+                                <input type="text" class="distribution-input" value="Top 5" readonly>
+                                <input type="number" class="distribution-input" name="dist5" placeholder="5%" value="5" required min="0" max="100">
+                                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
+                                <div class="error-message">Please enter a value between 0 and 100</div>
+                            </div>
                         </div>
-                        <div class="distribution-item">
-                            <input type="text" class="distribution-input" placeholder="Top 2" readonly>
-                            <input type="number" class="distribution-input" placeholder="20%" value="20">
-                        </div>
-                        <div class="distribution-item">
-                            <input type="text" class="distribution-input" placeholder="Top 3" readonly>
-                            <input type="number" class="distribution-input" placeholder="15%" value="15">
-                        </div>
-                        <div class="distribution-item">
-                            <input type="text" class="distribution-input" placeholder="Top 4" readonly>
-                            <input type="number" class="distribution-input" placeholder="10%" value="10">
-                        </div>
-                        <div class="distribution-item">
-                            <input type="text" class="distribution-input" placeholder="Top 5" readonly>
-                            <input type="number" class="distribution-input" placeholder="5%" value="5">
-                        </div>
-                    </div>
-                    <button class="add-btn" onclick="addDistributionInput()">Add Distribution</button>
+                        <button type="button" class="add-btn" onclick="addDistributionInput()">Add Distribution</button>
+                        <button type="submit" class="submit-btn">Save Distribution Settings</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -430,22 +516,26 @@
             document.getElementById(`${tab}Tab`).classList.add('active');
         }
 
-        // Add new bet input
+        // Add new bet input with delete button
         function addBetInput() {
             const betInputs = document.getElementById('betInputs');
             const newBet = document.createElement('div');
-            newBet.className = 'setting-item';
+            newBet.className = 'setting-row';
             const betCount = betInputs.children.length + 1;
             
             newBet.innerHTML = `
-                <label class="setting-label">Bet ${betCount}</label>
-                <input type="number" class="setting-input" placeholder="0.00 BNB" step="0.01">
+                <div class="setting-item">
+                    <label class="setting-label">Bet ${betCount}</label>
+                    <input type="number" class="setting-input" name="bet${betCount}" placeholder="0.00 BNB" step="0.01" required min="0.01">
+                    <div class="error-message">Please enter a valid bet amount</div>
+                </div>
+                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
             `;
             
             betInputs.appendChild(newBet);
         }
 
-        // Add new distribution input
+        // Add new distribution input with delete button
         function addDistributionInput() {
             const distributionInputs = document.getElementById('distributionInputs');
             const newDist = document.createElement('div');
@@ -453,11 +543,100 @@
             const topCount = distributionInputs.children.length + 1;
             
             newDist.innerHTML = `
-                <input type="text" class="distribution-input" placeholder="Top ${topCount}" readonly>
-                <input type="number" class="distribution-input" placeholder="0%" value="0">
+                <input type="text" class="distribution-input" value="Top ${topCount}" readonly>
+                <input type="number" class="distribution-input" name="dist${topCount}" placeholder="0%" value="0" required min="0" max="100">
+                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
+                <div class="error-message">Please enter a value between 0 and 100</div>
             `;
             
             distributionInputs.appendChild(newDist);
+        }
+
+        // Delete bet row
+        function deleteBet(btn) {
+            const row = btn.closest('.setting-row');
+            if (document.getElementById('betInputs').children.length > 1) {
+                row.remove();
+                renameBetInputs();
+            } else {
+                alert('Cannot delete the last bet setting');
+            }
+        }
+
+        // Delete distribution row
+        function deleteDistribution(btn) {
+            const row = btn.closest('.distribution-item');
+            if (document.getElementById('distributionInputs').children.length > 1) {
+                row.remove();
+                renameDistributionInputs();
+            } else {
+                alert('Cannot delete the last distribution setting');
+            }
+        }
+
+        // Rename bet inputs after deletion
+        function renameBetInputs() {
+            const betInputs = document.getElementById('betInputs');
+            const rows = betInputs.children;
+            for (let i = 0; i < rows.length; i++) {
+                const label = rows[i].querySelector('.setting-label');
+                const input = rows[i].querySelector('.setting-input');
+                label.textContent = `Bet ${i + 1}`;
+                input.name = `bet${i + 1}`;
+            }
+        }
+
+        // Rename distribution inputs after deletion
+        function renameDistributionInputs() {
+            const distributionInputs = document.getElementById('distributionInputs');
+            const rows = distributionInputs.children;
+            for (let i = 0; i < rows.length; i++) {
+                const label = rows[i].querySelector('input[readonly]');
+                const input = rows[i].querySelector('input[type="number"]');
+                label.value = `Top ${i + 1}`;
+                input.name = `dist${i + 1}`;
+            }
+        }
+
+        // Submit game settings
+        function submitGameSettings(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            console.log('Game Settings:', data);
+            // Here you would typically send the data to your backend
+            alert('Game settings saved!');
+        }
+
+        // Submit bet settings
+        function submitBetSettings(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            console.log('Bet Settings:', data);
+            // Here you would typically send the data to your backend
+            alert('Bet settings saved!');
+        }
+
+        // Submit distribution settings
+        function submitDistributionSettings(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Validate total percentage = 100
+            const total = Object.values(data).reduce((sum, value) => sum + Number(value), 0);
+            if (total !== 100) {
+                alert('Total distribution must equal 100%');
+                return;
+            }
+
+            console.log('Distribution Settings:', data);
+            // Here you would typically send the data to your backend
+            alert('Distribution settings saved!');
         }
     </script>
 </body>
