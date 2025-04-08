@@ -1,35 +1,96 @@
+<nav>
+    <div class="nav-container">
+        <div class="nav-left">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="docs.html" class="nav-link">Docs</a>
+            <a href="rank.html" class="nav-link">Rank</a>
+            <a href="player.html" class="nav-link">Wallet</a>
+        </div>
+        <div class="nav-right">
+            <button id="connectWallet" class="connect-btn">Connect Wallet</button>
+        </div>
+    </div>
+</nav>
+
 <style>
-    #tabs {
-        text-align: center;
-        padding: 5px 0;
+    nav {
+        background: #2d7b82;
+        padding: 15px 0;
+        border-bottom: 2px solid #fff;
     }
 
-    #tabs a {
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-left {
+        display: flex;
+        gap: 20px;
+    }
+
+    .nav-link {
         color: #fff;
         text-decoration: none;
-        padding: 5px 15px;
+        font-family: 'Press Start 2P', cursive;
         font-size: 14px;
+        padding: 8px 15px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
     }
 
-    #tabs a:hover {
-        color: #ff0;
+    .nav-link:hover {
+        border-color: #fff;
+        background: rgba(255, 255, 255, 0.1);
     }
 
-    #tabs a.active {
-        color: #ff0;
+    .connect-btn {
+        background: #ffd700;
+        color: #2d7b82;
+        border: none;
+        padding: 10px 20px;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .connect-btn:hover {
+        background: #ffed4a;
+        transform: translateY(-2px);
     }
 
     @media (max-width: 768px) {
-        #tabs a {
+        .nav-container {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .nav-left {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-link {
             font-size: 12px;
-            padding: 5px 10px;
+            padding: 6px 12px;
+        }
+
+        .connect-btn {
+            font-size: 10px;
+            padding: 8px 16px;
         }
     }
 </style>
 
-<div id="tabs">
-    <a href="index.html">Home</a> |
-    <a href="rank.html">Rank</a> |
-    <a href="index.html#history">History</a> |
-    <a href="index.html#guide">Guide</a>
-</div> 
+<script>
+    // Xử lý sự kiện click nút Connect Wallet
+    document.getElementById('connectWallet').addEventListener('click', function() {
+        // Ở đây bạn có thể thêm logic để kết nối ví
+        alert('Connecting wallet...');
+    });
+</script> 
