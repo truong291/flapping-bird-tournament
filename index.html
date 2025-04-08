@@ -72,6 +72,35 @@
             background: #a00;
         }
 
+        .network-button {
+            display: inline-block;
+            padding: 15px 30px;
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .testnet-button {
+            background: #4CAF50;
+        }
+
+        .testnet-button:hover {
+            background: #45a049;
+        }
+
+        .mainnet-button {
+            background: #2196F3;
+        }
+
+        .mainnet-button:hover {
+            background: #1976D2;
+        }
+
         #history h2, #guide h2 {
             font-size: 20px;
             margin-bottom: 20px;
@@ -151,7 +180,10 @@
         <section id="home" class="section active">
             <h1>Welcome to Flapping Bird Tournament</h1>
             <p>Join the ultimate flappy bird competition on BNB Chain!</p>
-            <a href="play.html" class="play-button">Play Now</a>
+            <div>
+                <a href="play.html?network=testnet" class="network-button testnet-button">Testnet</a>
+                <a href="play.html?network=mainnet" class="network-button mainnet-button">Mainnet</a>
+            </div>
         </section>
 
         <section id="history" class="section">
