@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flapping Bird Tournament</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Press Start 2P', cursive;
+            background: #7bc5cd;
+        }
+
+        #nav-container {
+            width: 100%;
+            background: #2d7b82;
+            border-bottom: 2px solid #fff;
+        }
+
+        #content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .section {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        #home {
+            display: block;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .play-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #f00;
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .play-button:hover {
+            background: #a00;
+        }
+
+        #history h2, #guide h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #ff0;
+        }
+
+        #history p, #guide p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        #guide ul {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        #guide li {
+            margin: 10px 0;
+        }
+
+        #bottom-container {
+            width: 100%;
+            background: #2d7b82;
+            border-top: 2px solid #fff;
+        }
+
+        @media (max-width: 768px) {
+            #nav-container {
+                order: 2;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                background: rgba(0, 0, 0, 0.8);
+                border-top: 2px solid #fff;
+                border-bottom: none;
+            }
+
+            #content-container {
+                margin-bottom: 60px;
+                padding: 10px;
+            }
+
+            .section {
+                padding: 15px;
+                margin: 10px 0;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .play-button {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            #history h2, #guide h2 {
+                font-size: 18px;
+            }
+
+            #history p, #guide p {
+                font-size: 12px;
+            }
+
+            #bottom-container {
+                background: rgba(0, 0, 0, 0.8);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="nav-container"></div>
+
+    <div id="content-container">
+        <section id="home" class="section active">
+            <h1>Welcome to Flapping Bird Tournament</h1>
+            <p>Join the ultimate flappy bird competition on BNB Chain!</p>
+            <a href="play.html" class="play-button">Play Now</a>
+        </section>
+
+        <section id="history" class="section">
+            <h2>Tournament History</h2>
+            <p>Track your gaming achievements and tournament rankings.</p>
+            <p>Coming soon...</p>
+        </section>
+
+        <section id="guide" class="section">
+            <h2>How to Play</h2>
+            <ul>
+                <li>Press SPACE or click to make the bird fly</li>
+                <li>Avoid hitting the pipes</li>
+                <li>Score 10 points to win the tournament</li>
+                <li>Connect your wallet to claim rewards</li>
+            </ul>
+        </section>
+    </div>
+
+    <div id="bottom-container"></div>
+
+    <script>
+        // Load navigation
+        fetch('src/components/nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-container').innerHTML = data;
+                // Đánh dấu tab Home là active khi load trang
+                setTimeout(() => {
+                    const links = document.querySelectorAll('#tabs a');
+                    links.forEach(link => link.classList.remove('active'));
+                    const homeLink = Array.from(links).find(link => link.textContent.includes('Home'));
+                    if (homeLink) homeLink.classList.add('active');
+                }, 100);
+            });
+
+        // Load footer
+        fetch('src/components/bottom.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('bottom-container').innerHTML = data;
+            });
+
+        // Xử lý chuyển tab
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            // Cập nhật URL hash
+            window.location.hash = sectionId;
+        }
+
+        // Xử lý hash URL khi load trang
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.slice(1);
+            if (hash && ['home', 'history', 'guide'].includes(hash)) {
+                showSection(hash);
+            }
+        });
+
+        // Xử lý hash URL khi thay đổi
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.slice(1);
+            if (hash && ['home', 'history', 'guide'].includes(hash)) {
+                showSection(hash);
+            }
+        });
+    </script>
+</body>
+</html>
