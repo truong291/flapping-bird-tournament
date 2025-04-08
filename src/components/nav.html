@@ -1,12 +1,12 @@
 <nav>
     <div class="nav-container">
-        <div class="nav-left">
+        <div class="nav-menu">
             <a href="index.html" class="nav-link">Home</a>
-            <a href="docs.html" class="nav-link">Docs</a>
             <a href="rank.html" class="nav-link">Rank</a>
             <a href="player.html" class="nav-link">Wallet</a>
+            <a href="docs.html" class="nav-link">Docs</a>
         </div>
-        <div class="nav-right">
+        <div class="nav-wallet">
             <button id="connectWallet" class="connect-btn">Connect Wallet</button>
         </div>
     </div>
@@ -17,6 +17,9 @@
         background: #2d7b82;
         padding: 15px 0;
         border-bottom: 2px solid #fff;
+        height: 80px;
+        display: flex;
+        align-items: center;
     }
 
     .nav-container {
@@ -26,11 +29,14 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
     }
 
-    .nav-left {
+    .nav-menu {
         display: flex;
         gap: 20px;
+        align-items: center;
+        margin: 0 auto;
     }
 
     .nav-link {
@@ -46,6 +52,10 @@
     .nav-link:hover {
         border-color: #fff;
         background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-wallet {
+        margin-left: auto;
     }
 
     .connect-btn {
@@ -65,12 +75,17 @@
     }
 
     @media (max-width: 768px) {
+        nav {
+            height: auto;
+            padding: 10px 0;
+        }
+
         .nav-container {
             flex-direction: column;
             gap: 15px;
         }
 
-        .nav-left {
+        .nav-menu {
             flex-wrap: wrap;
             justify-content: center;
         }
