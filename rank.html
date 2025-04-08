@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ranking - Flapping Bird Tournament</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Press Start 2P', cursive;
+            background: #7bc5cd;
+        }
+
+        #nav-container {
+            width: 100%;
+            background: #2d7b82;
+            border-bottom: 2px solid #fff;
+        }
+
+        #content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .section {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            background: #2d7b82;
+            border: 2px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+        }
+
+        .tab-button.active {
+            background: #fff;
+            color: #2d7b82;
+        }
+
+        .round-selector {
+            margin: 20px 0;
+            padding: 10px;
+            background: #2d7b82;
+            border: 2px solid #fff;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .ranking-table th,
+        .ranking-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #fff;
+        }
+
+        .ranking-table th {
+            background: #2d7b82;
+            color: #fff;
+        }
+
+        .ranking-table tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .wallet-address {
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .reward-link {
+            color: #ff0;
+            text-decoration: none;
+        }
+
+        .reward-link:hover {
+            text-decoration: underline;
+        }
+
+        .waiting {
+            color: #ff0;
+        }
+
+        .rank-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-gold {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+        }
+
+        .badge-silver {
+            background: linear-gradient(45deg, #C0C0C0, #A9A9A9);
+            color: #000;
+        }
+
+        .badge-bronze {
+            background: linear-gradient(45deg, #CD7F32, #8B4513);
+            color: #fff;
+        }
+
+        .badge-4 {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: #fff;
+        }
+
+        .badge-5 {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: #fff;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 15px;
+            background: #2d7b82;
+            border: 2px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination button.active {
+            background: #fff;
+            color: #2d7b82;
+        }
+
+        .pagination-info {
+            color: #fff;
+            font-size: 12px;
+        }
+
+        #bottom-container {
+            width: 100%;
+            background: #2d7b82;
+            border-top: 2px solid #fff;
+        }
+
+        @media (max-width: 768px) {
+            #content-container {
+                padding: 10px;
+            }
+
+            .section {
+                padding: 15px;
+                margin: 10px 0;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .tab-button {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .ranking-table th,
+            .ranking-table td {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .wallet-address {
+                font-size: 10px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="nav-container"></div>
+
+    <div id="content-container">
+        <h1>Tournament Rankings</h1>
+        
+        <select class="round-selector" id="roundSelect">
+            <option value="current">Current Round</option>
+            <option value="1">Round 1</option>
+            <option value="2">Round 2</option>
+            <option value="3">Round 3</option>
+        </select>
+
+        <div class="tab-container">
+            <button class="tab-button active" onclick="showTab('score')">Score</button>
+            <button class="tab-button" onclick="showTab('ref')">Ref</button>
+        </div>
+
+        <div id="scoreTab" class="section active">
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Score</th>
+                        <th>Reward</th>
+                    </tr>
+                </thead>
+                <tbody id="scoreTableBody">
+                    <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+                </tbody>
+            </table>
+            <div class="pagination" id="scorePagination">
+                <button onclick="changePage('score', 'prev')" id="scorePrevBtn">&lt;</button>
+                <span class="pagination-info" id="scorePageInfo">Page 1 of 1</span>
+                <button onclick="changePage('score', 'next')" id="scoreNextBtn">&gt;</button>
+            </div>
+        </div>
+
+        <div id="refTab" class="section">
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Ref Count</th>
+                        <th>Reward</th>
+                    </tr>
+                </thead>
+                <tbody id="refTableBody">
+                    <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+                </tbody>
+            </table>
+            <div class="pagination" id="refPagination">
+                <button onclick="changePage('ref', 'prev')" id="refPrevBtn">&lt;</button>
+                <span class="pagination-info" id="refPageInfo">Page 1 of 1</span>
+                <button onclick="changePage('ref', 'next')" id="refNextBtn">&gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bottom-container"></div>
+
+    <script>
+        // Dữ liệu mẫu
+        const mockData = {
+            score: Array.from({length: 20}, (_, i) => ({
+                rank: i + 1,
+                wallet: `0x${Math.random().toString(16).slice(2, 6)}...${Math.random().toString(16).slice(2, 6)}`,
+                score: Math.floor(Math.random() * 200) + 50,
+                reward: i < 3 ? 'Waiting' : `<a href="https://testnet.bscscan.com/tx/0x${Math.random().toString(16).slice(2, 10)}" class="reward-link">${(Math.random() * 0.5 + 0.1).toFixed(2)} BNB</a>`
+            })),
+            ref: Array.from({length: 20}, (_, i) => ({
+                rank: i + 1,
+                wallet: `0x${Math.random().toString(16).slice(2, 6)}...${Math.random().toString(16).slice(2, 6)}`,
+                refCount: Math.floor(Math.random() * 30) + 5,
+                reward: `<a href="https://testnet.bscscan.com/tx/0x${Math.random().toString(16).slice(2, 10)}" class="reward-link">${(Math.random() * 0.5 + 0.1).toFixed(2)} BNB</a>`
+            }))
+        };
+
+        // Cấu hình phân trang
+        const pageSize = 5;
+        let currentPage = {
+            score: 1,
+            ref: 1
+        };
+
+        // Hàm tạo badge cho rank
+        function getRankBadge(rank) {
+            if (rank > 5) return rank;
+            
+            const badges = {
+                1: '🥇',
+                2: '🥈',
+                3: '🥉',
+                4: '4',
+                5: '5'
+            };
+            
+            return `<span class="badge badge-${badges[rank] === rank ? rank : 'gold'}">${badges[rank]}</span>`;
+        }
+
+        // Hàm render dữ liệu
+        function renderData(type) {
+            const data = mockData[type];
+            const start = (currentPage[type] - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = data.slice(start, end);
+            const totalPages = Math.ceil(data.length / pageSize);
+            
+            const tbody = document.getElementById(`${type}TableBody`);
+            tbody.innerHTML = pageData.map(item => `
+                <tr>
+                    <td>
+                        <div class="rank-cell">
+                            ${getRankBadge(item.rank)}
+                            <span>${item.rank}</span>
+                        </div>
+                    </td>
+                    <td class="wallet-address">${item.wallet}</td>
+                    <td>${item.score || item.refCount}</td>
+                    <td>${item.reward}</td>
+                </tr>
+            `).join('');
+
+            // Cập nhật trạng thái nút phân trang
+            document.getElementById(`${type}PrevBtn`).disabled = currentPage[type] === 1;
+            document.getElementById(`${type}NextBtn`).disabled = currentPage[type] === totalPages;
+            document.getElementById(`${type}PageInfo`).textContent = `Page ${currentPage[type]} of ${totalPages}`;
+        }
+
+        // Hàm chuyển trang
+        function changePage(type, direction) {
+            if (direction === 'prev' && currentPage[type] > 1) {
+                currentPage[type]--;
+            } else if (direction === 'next' && currentPage[type] < Math.ceil(mockData[type].length / pageSize)) {
+                currentPage[type]++;
+            }
+            renderData(type);
+        }
+
+        // Load navigation
+        fetch('src/components/nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-container').innerHTML = data;
+                // Đánh dấu tab Rank là active
+                setTimeout(() => {
+                    const links = document.querySelectorAll('#tabs a');
+                    links.forEach(link => link.classList.remove('active'));
+                    const rankLink = Array.from(links).find(link => link.textContent.includes('Rank'));
+                    if (rankLink) rankLink.classList.add('active');
+                }, 100);
+            });
+
+        // Load footer
+        fetch('src/components/bottom.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('bottom-container').innerHTML = data;
+            });
+
+        // Xử lý chuyển tab
+        function showTab(tabName) {
+            // Ẩn tất cả các tab
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Hiện tab được chọn
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Cập nhật trạng thái active của các nút
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Render dữ liệu cho tab được chọn
+            renderData(tabName);
+        }
+
+        // Xử lý thay đổi round
+        document.getElementById('roundSelect').addEventListener('change', function() {
+            const selectedRound = this.value;
+            // Ở đây bạn có thể thêm logic để load dữ liệu của round được chọn
+            console.log('Selected round:', selectedRound);
+            // Reset về trang 1 và render lại dữ liệu
+            currentPage.score = 1;
+            currentPage.ref = 1;
+            renderData('score');
+            renderData('ref');
+        });
+
+        // Render dữ liệu ban đầu
+        renderData('score');
+    </script>
+</body>
+</html> 
