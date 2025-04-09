@@ -610,9 +610,10 @@
                             <div class="setting-row">
                                 <div class="setting-item" style="flex: 1;">
                                     <label class="setting-label">Button 1</label>
-                                    <div style="display: flex; gap: 10px;">
-                                        <input type="text" class="setting-input" name="btn1_name" placeholder="Button Name" style="flex: 1;">
-                                        <input type="url" class="setting-input" name="btn1_link" placeholder="https://" style="flex: 2;">
+                                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                        <input type="text" class="setting-input" name="btn1_name" placeholder="Button Name" style="flex: 2;">
+                                        <input type="url" class="setting-input" name="btn1_link" placeholder="https://" style="flex: 3;">
+                                        <input type="number" class="setting-input" name="btn1_line" placeholder="Line" style="flex: 1;" min="1" value="1">
                                     </div>
                                 </div>
                                 <button type="button" class="delete-btn" onclick="deleteTelegramButton(this)">Delete</button>
@@ -773,12 +774,64 @@
             });
         }
 
-        // Submit telegram notification with question
+        // Submit telegram notification with validation
         function submitTelegramNotify(event) {
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
+            
+            // Validate image URL
+            if (!data.imageUrl.trim()) {
+                showAlert('Please enter image URL');
+                return;
+            }
+
+            // Validate message text
+            if (!data.messageText.trim()) {
+                showAlert('Please enter message text');
+                return;
+            }
+
+            // Validate buttons
+            const buttonInputs = document.getElementById('buttonInputs');
+            const buttons = buttonInputs.children;
+            for (let i = 0; i < buttons.length; i++) {
+                const buttonNum = i + 1;
+                const nameValue = data[`btn${buttonNum}_name`];
+                const linkValue = data[`btn${buttonNum}_link`];
+                const lineValue = data[`btn${buttonNum}_line`];
+
+                if (!nameValue || !nameValue.trim()) {
+                    showAlert(`Please enter name for Button ${buttonNum}`);
+                    return;
+                }
+                if (!linkValue || !linkValue.trim()) {
+                    showAlert(`Please enter URL for Button ${buttonNum}`);
+                    return;
+                }
+                if (!lineValue || lineValue < 1) {
+                    showAlert(`Please enter valid line number for Button ${buttonNum}`);
+                    return;
+                }
+            }
+
+            // Group buttons by line
+            const buttonsByLine = {};
+            for (let i = 0; i < buttons.length; i++) {
+                const buttonNum = i + 1;
+                const line = parseInt(data[`btn${buttonNum}_line`]);
+                if (!buttonsByLine[line]) {
+                    buttonsByLine[line] = [];
+                }
+                buttonsByLine[line].push({
+                    name: data[`btn${buttonNum}_name`],
+                    link: data[`btn${buttonNum}_link`]
+                });
+            }
+
+            // Add grouped buttons to data object
+            data.buttonsByLine = buttonsByLine;
             
             showQuestion('Do you want to send this notification?', () => {
                 console.log('Telegram Notification:', data);
@@ -797,9 +850,10 @@
             newButton.innerHTML = `
                 <div class="setting-item" style="flex: 1;">
                     <label class="setting-label">Button ${buttonCount}</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" class="setting-input" name="btn${buttonCount}_name" placeholder="Button Name" style="flex: 1;">
-                        <input type="url" class="setting-input" name="btn${buttonCount}_link" placeholder="https://" style="flex: 2;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" class="setting-input" name="btn${buttonCount}_name" placeholder="Button Name" style="flex: 2;">
+                        <input type="url" class="setting-input" name="btn${buttonCount}_link" placeholder="https://" style="flex: 3;">
+                        <input type="number" class="setting-input" name="btn${buttonCount}_line" placeholder="Line" style="flex: 1;" min="1" value="1">
                     </div>
                 </div>
                 <button type="button" class="delete-btn" onclick="deleteTelegramButton(this)">Delete</button>
@@ -827,10 +881,12 @@
                 const label = rows[i].querySelector('.setting-label');
                 const nameInput = rows[i].querySelector('input[type="text"]');
                 const linkInput = rows[i].querySelector('input[type="url"]');
+                const lineInput = rows[i].querySelector('input[type="number"]');
                 const buttonNum = i + 1;
                 label.textContent = `Button ${buttonNum}`;
                 nameInput.name = `btn${buttonNum}_name`;
                 linkInput.name = `btn${buttonNum}_link`;
+                lineInput.name = `btn${buttonNum}_line`;
             }
         }
 
