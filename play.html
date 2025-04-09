@@ -12,11 +12,11 @@
             flex-direction: column;
             font-family: 'Press Start 2P', cursive;
             background: #7bc5cd;
-            overflow: hidden; /* Ngăn scroll trên mobile */
-            position: fixed; /* Fix viewport trên mobile */
+            overflow: hidden; /* Prevent scrolling on mobile */
+            position: fixed; /* Fix viewport on mobile */
             width: 100%;
             height: 100%;
-            touch-action: none; /* Ngăn tất cả touch actions mặc định */
+            touch-action: none; /* Prevent all default touch actions */
         }
 
         #nav-container {
@@ -132,7 +132,7 @@
             }
         }
 
-        /* Ẩn thanh địa chỉ trên mobile */
+        /* Hide address bar on mobile */
         @media (display-mode: standalone) {
             body {
                 padding-top: env(safe-area-inset-top);
@@ -167,7 +167,7 @@
             .then(data => {
                 document.getElementById('nav-container').innerHTML = data;
                 debugLog('Navigation loaded');
-                // Đánh dấu tab Play là active
+                // Mark Play tab as active
                 setTimeout(() => {
                     const links = document.querySelectorAll('#tabs a');
                     links.forEach(link => link.classList.remove('active'));

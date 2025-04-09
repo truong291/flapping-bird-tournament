@@ -211,7 +211,7 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('nav-container').innerHTML = data;
-                // Đánh dấu tab Home là active khi load trang
+                // Mark Home tab as active when loading the page
                 setTimeout(() => {
                     const links = document.querySelectorAll('#tabs a');
                     links.forEach(link => link.classList.remove('active'));
@@ -227,18 +227,18 @@
                 document.getElementById('bottom-container').innerHTML = data;
             });
 
-        // Xử lý chuyển tab
+        // Handle tab switching
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
 
-            // Cập nhật URL hash
+            // Update URL hash
             window.location.hash = sectionId;
         }
 
-        // Xử lý hash URL khi load trang
+        // Handle URL hash when loading the page
         window.addEventListener('load', () => {
             const hash = window.location.hash.slice(1);
             if (hash && ['home', 'history', 'guide'].includes(hash)) {
@@ -246,7 +246,7 @@
             }
         });
 
-        // Xử lý hash URL khi thay đổi
+        // Handle URL hash changes
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.slice(1);
             if (hash && ['home', 'history', 'guide'].includes(hash)) {
