@@ -573,6 +573,18 @@
             currentCallback = callback;
         }
 
+        // Alert popup function (OK only)
+        function showAlert(message) {
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('questionPopup').style.display = 'block';
+            document.querySelector('.popup-yes').style.display = 'none';
+            document.querySelector('.popup-no').textContent = 'OK';
+            currentCallback = () => {
+                document.querySelector('.popup-yes').style.display = 'block';
+                document.querySelector('.popup-no').textContent = 'No';
+            };
+        }
+
         function handleYes() {
             closePopup();
             if (currentCallback) {
@@ -583,7 +595,10 @@
 
         function closePopup() {
             document.getElementById('questionPopup').style.display = 'none';
-            currentCallback = null;
+            if (currentCallback) {
+                currentCallback();
+                currentCallback = null;
+            }
         }
 
         // Toggle pause/maintenance buttons with question
@@ -609,7 +624,7 @@
             showQuestion(`Do you want to add ${bonusAmount} BNB to jackpot?`, () => {
                 console.log('Adding bonus:', bonusAmount, 'BNB');
                 // Here you would typically send the data to your backend
-                alert('Bonus added successfully!');
+                showAlert('Bonus added successfully!');
             });
         }
 
@@ -623,7 +638,7 @@
             showQuestion('Do you want to update game settings?', () => {
                 console.log('Game Settings:', data);
                 // Here you would typically send the data to your backend
-                alert('Game settings saved!');
+                showAlert('Game settings saved!');
             });
         }
 
@@ -637,7 +652,7 @@
             showQuestion('Do you want to update bet settings?', () => {
                 console.log('Bet Settings:', data);
                 // Here you would typically send the data to your backend
-                alert('Bet settings saved!');
+                showAlert('Bet settings saved!');
             });
         }
 
@@ -651,14 +666,14 @@
             // Validate total percentage = 100
             const total = Object.values(data).reduce((sum, value) => sum + Number(value), 0);
             if (total !== 100) {
-                alert('Total distribution must equal 100%');
+                showAlert('Total distribution must equal 100%');
                 return;
             }
 
             showQuestion('Do you want to update distribution settings?', () => {
                 console.log('Distribution Settings:', data);
                 // Here you would typically send the data to your backend
-                alert('Distribution settings saved!');
+                showAlert('Distribution settings saved!');
             });
         }
 
