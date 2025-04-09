@@ -726,10 +726,10 @@
             <div class="settings-section" style="margin-top: 30px;">
                 <div style="background: rgba(0, 0, 0, 0.2); padding: 30px; border-radius: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid rgba(255,215,0,0.3); padding-bottom: 20px;">
-                        <h3 style="color: #ffd700; font-size: 20px; font-weight: 500;">Blacklist Management</h3>
+                        <h3 style="color: #ffd700; font-size: 20px; font-family: 'Press Start 2P', cursive;">Blacklist Management</h3>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <label style="color: #ffd700; font-size: 14px;">Records per page:</label>
-                            <select id="blacklistPageSize" class="setting-input" style="width: 80px; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid #ffd700; color: #ffd700; border-radius: 4px;" onchange="updateBlacklistPage(1)">
+                            <label style="color: #ffd700; font-size: 14px; font-family: 'Press Start 2P', cursive;">Records per page:</label>
+                            <select id="blacklistPageSize" class="setting-input" style="width: 80px; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid #ffd700; color: #ffd700; border-radius: 4px; font-family: 'Press Start 2P', cursive;" onchange="updateBlacklistPage(1)">
                                 <option value="5">5</option>
                                 <option value="10">10</option>
                                 <option value="20">20</option>
@@ -740,15 +740,15 @@
                     <form id="blacklistForm" onsubmit="submitBlacklist(event)" style="margin-bottom: 40px;">
                         <div style="display: grid; grid-template-columns: 30% 60% 10%; gap: 15px; align-items: start;">
                             <div>
-                                <label style="display: block; margin-bottom: 8px; color: #ffd700; font-size: 14px;">Wallet Address</label>
-                                <input type="text" class="setting-input" name="walletAddress" placeholder="0x..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #ffd700; color: #fff; border-radius: 4px;">
+                                <label style="display: block; margin-bottom: 8px; color: #ffd700; font-size: 14px; font-family: 'Press Start 2P', cursive;">Wallet Address</label>
+                                <input type="text" class="setting-input" name="walletAddress" placeholder="0x..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 2px solid #ffd700; color: #fff; border-radius: 4px; font-family: 'Press Start 2P', cursive; font-size: 12px;">
                             </div>
                             <div>
-                                <label style="display: block; margin-bottom: 8px; color: #ffd700; font-size: 14px;">Reason</label>
-                                <input type="text" class="setting-input" name="reason" placeholder="Enter reason for blacklisting..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #ffd700; color: #fff; border-radius: 4px;">
+                                <label style="display: block; margin-bottom: 8px; color: #ffd700; font-size: 14px; font-family: 'Press Start 2P', cursive;">Reason</label>
+                                <input type="text" class="setting-input" name="reason" placeholder="Enter reason for blacklisting..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 2px solid #ffd700; color: #fff; border-radius: 4px; font-family: 'Press Start 2P', cursive; font-size: 12px;">
                             </div>
                             <div style="padding-top: 32px;">
-                                <button type="submit" class="control-btn" style="width: 100%; background: #ffd700; color: #000; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px;">Blacklist</button>
+                                <button type="submit" class="control-btn" style="width: 100%; background: #ffd700; color: #000; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px; font-family: 'Press Start 2P', cursive;">Blacklist</button>
                             </div>
                         </div>
                     </form>
@@ -757,10 +757,10 @@
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
                                 <tr style="border-bottom: 2px solid #ffd700;">
-                                    <th style="padding: 12px 16px; text-align: center; color: #ffd700; font-size: 12px; font-weight: 500; width: 10%;">No.</th>
-                                    <th style="padding: 12px 16px; text-align: left; color: #ffd700; font-size: 12px; font-weight: 500; width: 20%;">Wallet</th>
-                                    <th style="padding: 12px 16px; text-align: left; color: #ffd700; font-size: 12px; font-weight: 500; width: 60%;">Reason</th>
-                                    <th style="padding: 12px 16px; text-align: center; color: #ffd700; font-size: 12px; font-weight: 500; width: 10%;">Action</th>
+                                    <th style="padding: 12px 16px; text-align: center; color: #ffd700; font-size: 12px; font-weight: 500; width: 10%; font-family: 'Press Start 2P', cursive;">No.</th>
+                                    <th style="padding: 12px 16px; text-align: left; color: #ffd700; font-size: 12px; font-weight: 500; width: 20%; font-family: 'Press Start 2P', cursive;">Wallet</th>
+                                    <th style="padding: 12px 16px; text-align: left; color: #ffd700; font-size: 12px; font-weight: 500; width: 60%; font-family: 'Press Start 2P', cursive;">Reason</th>
+                                    <th style="padding: 12px 16px; text-align: center; color: #ffd700; font-size: 12px; font-weight: 500; width: 10%; font-family: 'Press Start 2P', cursive;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="blacklistTableBody">
@@ -770,16 +770,16 @@
                                     <td style="padding: 12px 16px; color: rgba(255,255,255,0.9); font-size: 12px; font-family: 'Press Start 2P', cursive;">0x1234...5678</td>
                                     <td style="padding: 12px 16px; color: rgba(255,255,255,0.9); font-size: 12px; font-family: 'Press Start 2P', cursive;">Sample reason for blacklisting this wallet</td>
                                     <td style="padding: 12px 16px; text-align: center;">
-                                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 10px;">Unblacklist</button>
+                                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 10px; font-family: 'Press Start 2P', cursive;">Unblacklist</button>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <div class="pagination" style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-top: 20px;">
-                            <button class="control-btn" onclick="updateBlacklistPage('prev')" style="min-width: 100px; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px;">Previous</button>
-                            <div style="color: #ffd700; font-size: 12px; font-family: 'Press Start 2P', cursive;">Page <span id="currentBlacklistPage" style="font-weight: 500;">1</span> of <span id="totalBlacklistPages" style="font-weight: 500;">1</span></div>
-                            <button class="control-btn" onclick="updateBlacklistPage('next')" style="min-width: 100px; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px;">Next</button>
+                        <div class="pagination" style="display: flex; justify-content: center; gap: 10px; align-items: center; margin-top: 20px;">
+                            <button class="control-btn" onclick="updateBlacklistPage('prev')" style="min-width: 80px; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; font-family: 'Press Start 2P', cursive;">Previous</button>
+                            <div style="color: #ffd700; font-size: 10px; font-family: 'Press Start 2P', cursive;">Page <span id="currentBlacklistPage" style="font-weight: 500;">1</span> of <span id="totalBlacklistPages" style="font-weight: 500;">1</span></div>
+                            <button class="control-btn" onclick="updateBlacklistPage('next')" style="min-width: 80px; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; font-family: 'Press Start 2P', cursive;">Next</button>
                         </div>
                     </div>
                 </div>
@@ -1179,7 +1179,7 @@
                     <td style="padding: 12px 16px; color: rgba(255,255,255,0.9); font-size: 12px; font-family: 'Press Start 2P', cursive;">${item.wallet}</td>
                     <td style="padding: 12px 16px; color: rgba(255,255,255,0.9); font-size: 12px; font-family: 'Press Start 2P', cursive;">${item.reason}</td>
                     <td style="padding: 12px 16px; text-align: center;">
-                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${item.wallet}" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 10px;">Unblacklist</button>
+                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${item.wallet}" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 10px; font-family: 'Press Start 2P', cursive;">Unblacklist</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
