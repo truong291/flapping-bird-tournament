@@ -743,21 +743,46 @@
                     </form>
 
                     <div class="blacklist-container" style="margin-top: 40px;">
-                        <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 16px; border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 10px;">Blacklisted Wallets</h3>
-                        <div class="blacklist-grid" style="display: grid; gap: 15px;">
-                            <!-- Sample blacklisted wallet -->
-                            <div class="blacklist-item" style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.1);">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                    <div style="flex: 1;">
-                                        <div style="font-family: monospace; color: #fff; font-size: 14px; margin-bottom: 12px;">0x1234...5678</div>
-                                        <div style="color: #ffd700; font-size: 12px; margin-bottom: 4px;">Reason:</div>
-                                        <div style="color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.4;">Sample reason for blacklisting this wallet</div>
-                                    </div>
-                                    <div style="margin-left: 20px;">
-                                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" style="min-width: 100px;">Unblacklist</button>
-                                    </div>
-                                </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: #ffd700; font-size: 16px;">Blacklisted Wallets</h3>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <label style="color: #fff; font-size: 12px;">Records per page:</label>
+                                <select id="blacklistPageSize" class="setting-input" style="width: 70px; padding: 5px;" onchange="updateBlacklistPage(1)">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                </select>
                             </div>
+                        </div>
+                        
+                        <div class="table-container" style="margin-bottom: 20px; overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid rgba(255,215,0,0.3);">
+                                        <th style="padding: 12px; text-align: left; color: #ffd700; font-size: 14px; font-weight: normal; width: 60px;">No.</th>
+                                        <th style="padding: 12px; text-align: left; color: #ffd700; font-size: 14px; font-weight: normal;">Wallet</th>
+                                        <th style="padding: 12px; text-align: left; color: #ffd700; font-size: 14px; font-weight: normal;">Reason</th>
+                                        <th style="padding: 12px; text-align: center; color: #ffd700; font-size: 14px; font-weight: normal; width: 120px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="blacklistTableBody">
+                                    <!-- Sample row -->
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <td style="padding: 12px; color: #fff; font-size: 14px;">1</td>
+                                        <td style="padding: 12px; color: #fff; font-size: 14px; font-family: monospace;">0x1234...5678</td>
+                                        <td style="padding: 12px; color: #fff; font-size: 14px;">Sample reason for blacklisting this wallet</td>
+                                        <td style="padding: 12px; text-align: center;">
+                                            <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" style="min-width: 100px;">Unblacklist</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination" style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+                            <button class="control-btn" onclick="updateBlacklistPage('prev')" style="min-width: 80px;">Previous</button>
+                            <span style="color: #fff; font-size: 14px;">Page <span id="currentBlacklistPage">1</span> of <span id="totalBlacklistPages">1</span></span>
+                            <button class="control-btn" onclick="updateBlacklistPage('next')" style="min-width: 80px;">Next</button>
                         </div>
                     </div>
                 </div>
@@ -1118,7 +1143,53 @@
             }
         }
 
-        // Update blacklist related functions
+        // Add pagination related functions
+        let currentBlacklistPage = 1;
+        let blacklistData = []; // This will store all blacklisted wallets
+
+        function updateBlacklistPage(action) {
+            const pageSize = parseInt(document.getElementById('blacklistPageSize').value);
+            const totalPages = Math.ceil(blacklistData.length / pageSize);
+            
+            if (action === 'prev' && currentBlacklistPage > 1) {
+                currentBlacklistPage--;
+            } else if (action === 'next' && currentBlacklistPage < totalPages) {
+                currentBlacklistPage++;
+            } else if (typeof action === 'number') {
+                currentBlacklistPage = action;
+            }
+
+            document.getElementById('currentBlacklistPage').textContent = currentBlacklistPage;
+            document.getElementById('totalBlacklistPages').textContent = totalPages || 1;
+
+            renderBlacklistTable();
+        }
+
+        function renderBlacklistTable() {
+            const pageSize = parseInt(document.getElementById('blacklistPageSize').value);
+            const start = (currentBlacklistPage - 1) * pageSize;
+            const end = start + pageSize;
+            const tableBody = document.getElementById('blacklistTableBody');
+            
+            tableBody.innerHTML = '';
+            
+            const pageData = blacklistData.slice(start, end);
+            pageData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.style = 'border-bottom: 1px solid rgba(255,255,255,0.1);';
+                row.innerHTML = `
+                    <td style="padding: 12px; color: #fff; font-size: 14px;">${start + index + 1}</td>
+                    <td style="padding: 12px; color: #fff; font-size: 14px; font-family: monospace;">${item.wallet}</td>
+                    <td style="padding: 12px; color: #fff; font-size: 14px;">${item.reason}</td>
+                    <td style="padding: 12px; text-align: center;">
+                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${item.wallet}" style="min-width: 100px;">Unblacklist</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Update submitBlacklist function
         function submitBlacklist(event) {
             event.preventDefault();
             const form = event.target;
@@ -1140,38 +1211,43 @@
                 console.log('Blacklisting wallet:', walletAddress, 'Reason:', reason);
                 // Here you would typically send the data to your backend
                 
-                // Add to UI
-                const blacklistGrid = document.querySelector('.blacklist-grid');
-                const newItem = document.createElement('div');
-                newItem.className = 'blacklist-item';
-                newItem.style = 'background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 5px;';
-                newItem.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span style="font-family: monospace; color: #fff;">${walletAddress}</span>
-                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${walletAddress}">Unblacklist</button>
-                    </div>
-                    <div style="font-size: 10px; color: #ffd700;">Reason:</div>
-                    <div style="font-size: 12px; color: #fff; margin-top: 5px;">${reason}</div>
-                `;
-                blacklistGrid.appendChild(newItem);
+                // Add to blacklistData array
+                blacklistData.push({ wallet: walletAddress, reason: reason });
+                
+                // Update table
+                updateBlacklistPage(Math.ceil(blacklistData.length / parseInt(document.getElementById('blacklistPageSize').value)));
                 
                 form.reset();
                 showAlert('Wallet has been blacklisted!');
             });
         }
 
+        // Update unblacklistWallet function
         function unblacklistWallet(btn) {
             const wallet = btn.getAttribute('data-wallet');
-            const reason = btn.closest('.blacklist-item').querySelector('div:last-child').textContent;
-            showQuestion(`Do you want to unblacklist wallet ${wallet}?\nReason for blacklist: ${reason}`, () => {
+            const item = blacklistData.find(x => x.wallet === wallet);
+            if (!item) return;
+
+            showQuestion(`Do you want to unblacklist wallet ${wallet}?\nReason for blacklist: ${item.reason}`, () => {
                 console.log('Unblacklisting wallet:', wallet);
                 // Here you would typically send the data to your backend
                 
-                // Remove from UI
-                btn.closest('.blacklist-item').remove();
+                // Remove from blacklistData array
+                blacklistData = blacklistData.filter(x => x.wallet !== wallet);
+                
+                // Update table
+                updateBlacklistPage(currentBlacklistPage);
+                
                 showAlert('Wallet has been unblacklisted!');
             });
         }
+
+        // Initialize with some sample data
+        blacklistData = [
+            { wallet: '0x1234...5678', reason: 'Sample reason for blacklisting this wallet' },
+            // Add more sample data as needed
+        ];
+        renderBlacklistTable();
     </script>
 </body>
 </html> 
