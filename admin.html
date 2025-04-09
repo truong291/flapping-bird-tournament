@@ -553,6 +553,7 @@
                     <button class="tab-btn" onclick="switchTab('bet')">Bet Setting</button>
                     <button class="tab-btn" onclick="switchTab('distribution')">Distribution Setting</button>
                     <button class="tab-btn" onclick="switchTab('telegram')">Telegram Notify</button>
+                    <button class="tab-btn" onclick="switchTab('blacklist')">Blacklist</button>
                 </div>
 
                 <!-- Game Settings -->
@@ -719,6 +720,36 @@
                         <button type="button" class="add-btn" style="margin-bottom: 20px;">Add Button</button>
                         <button type="submit" class="submit-btn" style="margin: 0;">Send Notification</button>
                     </form>
+                </div>
+
+                <!-- Blacklist Settings -->
+                <div class="tab-content" id="blacklistTab">
+                    <form id="blacklistForm" onsubmit="submitBlacklist(event)">
+                        <div class="setting-item">
+                            <label class="setting-label">Wallet Address</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <input type="text" class="setting-input" name="walletAddress" placeholder="0x..." style="width: 400px;">
+                                <button type="submit" class="control-btn">Blacklist</button>
+                            </div>
+                            <label class="setting-label">Reason</label>
+                            <textarea class="setting-input" name="reason" placeholder="Enter reason for blacklisting..." style="width: 400px; height: 60px; resize: vertical;"></textarea>
+                        </div>
+                    </form>
+
+                    <div class="blacklist-container" style="margin-top: 30px;">
+                        <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 14px;">Blacklisted Wallets</h3>
+                        <div class="blacklist-grid" style="display: grid; gap: 10px;">
+                            <!-- Sample blacklisted wallet -->
+                            <div class="blacklist-item" style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 5px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <span style="font-family: monospace; color: #fff;">0x1234...5678</span>
+                                    <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678">Unblacklist</button>
+                                </div>
+                                <div style="font-size: 10px; color: #ffd700;">Reason:</div>
+                                <div style="font-size: 12px; color: #fff; margin-top: 5px;">Sample reason for blacklisting this wallet</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1075,6 +1106,61 @@
                 label.value = `Top ${i + 1}`;
                 input.name = `dist${i + 1}`;
             }
+        }
+
+        // Update blacklist related functions
+        function submitBlacklist(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const walletAddress = formData.get('walletAddress');
+            const reason = formData.get('reason');
+
+            if (!walletAddress || !walletAddress.trim()) {
+                showAlert('Please enter a wallet address');
+                return;
+            }
+
+            if (!reason || !reason.trim()) {
+                showAlert('Please enter a reason for blacklisting');
+                return;
+            }
+
+            showQuestion(`Do you want to blacklist wallet ${walletAddress}?`, () => {
+                console.log('Blacklisting wallet:', walletAddress, 'Reason:', reason);
+                // Here you would typically send the data to your backend
+                
+                // Add to UI
+                const blacklistGrid = document.querySelector('.blacklist-grid');
+                const newItem = document.createElement('div');
+                newItem.className = 'blacklist-item';
+                newItem.style = 'background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 5px;';
+                newItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-family: monospace; color: #fff;">${walletAddress}</span>
+                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${walletAddress}">Unblacklist</button>
+                    </div>
+                    <div style="font-size: 10px; color: #ffd700;">Reason:</div>
+                    <div style="font-size: 12px; color: #fff; margin-top: 5px;">${reason}</div>
+                `;
+                blacklistGrid.appendChild(newItem);
+                
+                form.reset();
+                showAlert('Wallet has been blacklisted!');
+            });
+        }
+
+        function unblacklistWallet(btn) {
+            const wallet = btn.getAttribute('data-wallet');
+            const reason = btn.closest('.blacklist-item').querySelector('div:last-child').textContent;
+            showQuestion(`Do you want to unblacklist wallet ${wallet}?\nReason for blacklist: ${reason}`, () => {
+                console.log('Unblacklisting wallet:', wallet);
+                // Here you would typically send the data to your backend
+                
+                // Remove from UI
+                btn.closest('.blacklist-item').remove();
+                showAlert('Wallet has been unblacklisted!');
+            });
         }
     </script>
 </body>
