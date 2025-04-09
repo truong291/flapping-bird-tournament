@@ -380,6 +380,18 @@
             background: #ffd700;
             color: #2d7b82;
         }
+
+        .game-settings-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .game-settings-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -444,40 +456,52 @@
                     <button class="tab-btn active" onclick="switchTab('game')">Game Setting</button>
                     <button class="tab-btn" onclick="switchTab('bet')">Bet Setting</button>
                     <button class="tab-btn" onclick="switchTab('distribution')">Distribution Setting</button>
+                    <button class="tab-btn" onclick="switchTab('telegram')">Telegram Notify</button>
                 </div>
 
                 <!-- Game Settings -->
                 <div class="tab-content active" id="gameTab">
                     <form onsubmit="submitGameSettings(event)">
-                        <div class="setting-item">
-                            <label class="setting-label">PIPE GAP</label>
-                            <input type="number" class="setting-input" name="pipeGap" placeholder="125" step="1" required>
+                        <div class="game-settings-grid">
+                            <!-- Game Settings Column -->
+                            <div>
+                                <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 14px;">Game Settings</h3>
+                                <div class="setting-item">
+                                    <label class="setting-label">PIPE GAP</label>
+                                    <input type="number" class="setting-input" name="pipeGap" value="125" step="1" required>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="setting-label">GRAVITY</label>
+                                    <input type="number" class="setting-input" name="gravity" value="0.25" step="0.01" required>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="setting-label">LIFT</label>
+                                    <input type="number" class="setting-input" name="lift" value="-6" step="1" required>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="setting-label">PIPE SPEED</label>
+                                    <input type="number" class="setting-input" name="pipeSpeed" value="2" step="1" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Round Time Column -->
+                            <div>
+                                <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 14px;">Round Time</h3>
+                                <div class="setting-item">
+                                    <label class="setting-label">Play Time (minutes)</label>
+                                    <input type="number" class="setting-input" name="playTime" value="50" step="1" required>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="setting-label">Ranking & Reward Time (minutes)</label>
+                                    <input type="number" class="setting-input" name="rewardTime" value="5" step="1" required>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="setting-label">New Round Preparation Time (minutes)</label>
+                                    <input type="number" class="setting-input" name="prepTime" value="5" step="1" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="setting-item">
-                            <label class="setting-label">GRAVITY</label>
-                            <input type="number" class="setting-input" name="gravity" placeholder="0.25" step="0.01" required>
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">LIFT</label>
-                            <input type="number" class="setting-input" name="lift" placeholder="-6" step="1" required>
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">PIPE SPEED</label>
-                            <input type="number" class="setting-input" name="pipeSpeed" placeholder="2" step="1" required>
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Thời gian chơi (phút)</label>
-                            <input type="number" class="setting-input" name="playTime" placeholder="50" step="1" required>
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Thời gian sắp xếp và trả thưởng (phút)</label>
-                            <input type="number" class="setting-input" name="rewardTime" placeholder="5" step="1" required>
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Thời gian chuẩn bị cho vòng mới (phút)</label>
-                            <input type="number" class="setting-input" name="prepTime" placeholder="5" step="1" required>
-                        </div>
-                        <button type="submit" class="control-btn">Save Settings</button>
+                        <button type="submit" class="control-btn" style="margin-top: 20px;">Save Settings</button>
                     </form>
                 </div>
 
@@ -566,6 +590,37 @@
                         </div>
                         <button type="button" class="add-btn" onclick="addDistributionInput()">Add Distribution</button>
                         <button type="submit" class="submit-btn">Save Distribution Settings</button>
+                    </form>
+                </div>
+
+                <!-- Telegram Notify Settings -->
+                <div class="tab-content" id="telegramTab">
+                    <form id="telegramNotifyForm" onsubmit="submitTelegramNotify(event)">
+                        <div class="setting-item">
+                            <label class="setting-label">Image URL</label>
+                            <input type="url" class="setting-input" name="imageUrl" placeholder="https://example.com/image.jpg" style="width: 100%;">
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">Message Text</label>
+                            <textarea class="setting-input" name="messageText" placeholder="Enter your message here..." style="width: 100%; height: 100px; resize: vertical;"></textarea>
+                        </div>
+                        
+                        <!-- Inline Buttons Section -->
+                        <div id="buttonInputs">
+                            <div class="setting-row">
+                                <div class="setting-item" style="flex: 1;">
+                                    <label class="setting-label">Button 1</label>
+                                    <div style="display: flex; gap: 10px;">
+                                        <input type="text" class="setting-input" name="btn1_name" placeholder="Button Name" style="flex: 1;">
+                                        <input type="url" class="setting-input" name="btn1_link" placeholder="https://" style="flex: 2;">
+                                    </div>
+                                </div>
+                                <button type="button" class="delete-btn" onclick="deleteTelegramButton(this)">Delete</button>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="add-btn" onclick="addTelegramButton()">Add Button</button>
+                        <button type="submit" class="submit-btn">Send Notification</button>
                     </form>
                 </div>
             </div>
@@ -672,7 +727,7 @@
             // Validate total time must be whole hours
             const totalMinutes = parseInt(data.playTime) + parseInt(data.rewardTime) + parseInt(data.prepTime);
             if (totalMinutes % 60 !== 0) {
-                showAlert('Tổng thời gian phải là giờ chẵn');
+                showAlert('Total time must be in whole hours');
                 return;
             }
 
@@ -716,6 +771,67 @@
                 // Here you would typically send the data to your backend
                 showAlert('Distribution settings saved!');
             });
+        }
+
+        // Submit telegram notification with question
+        function submitTelegramNotify(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            showQuestion('Do you want to send this notification?', () => {
+                console.log('Telegram Notification:', data);
+                // Here you would typically send the data to your backend
+                showAlert('Notification sent successfully!');
+            });
+        }
+
+        // Add new telegram button input
+        function addTelegramButton() {
+            const buttonInputs = document.getElementById('buttonInputs');
+            const newButton = document.createElement('div');
+            newButton.className = 'setting-row';
+            const buttonCount = buttonInputs.children.length + 1;
+            
+            newButton.innerHTML = `
+                <div class="setting-item" style="flex: 1;">
+                    <label class="setting-label">Button ${buttonCount}</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" class="setting-input" name="btn${buttonCount}_name" placeholder="Button Name" style="flex: 1;">
+                        <input type="url" class="setting-input" name="btn${buttonCount}_link" placeholder="https://" style="flex: 2;">
+                    </div>
+                </div>
+                <button type="button" class="delete-btn" onclick="deleteTelegramButton(this)">Delete</button>
+            `;
+            
+            buttonInputs.appendChild(newButton);
+        }
+
+        // Delete telegram button
+        function deleteTelegramButton(btn) {
+            const row = btn.closest('.setting-row');
+            if (document.getElementById('buttonInputs').children.length > 1) {
+                row.remove();
+                renameTelegramButtons();
+            } else {
+                alert('Cannot delete the last button');
+            }
+        }
+
+        // Rename telegram buttons after deletion
+        function renameTelegramButtons() {
+            const buttonInputs = document.getElementById('buttonInputs');
+            const rows = buttonInputs.children;
+            for (let i = 0; i < rows.length; i++) {
+                const label = rows[i].querySelector('.setting-label');
+                const nameInput = rows[i].querySelector('input[type="text"]');
+                const linkInput = rows[i].querySelector('input[type="url"]');
+                const buttonNum = i + 1;
+                label.textContent = `Button ${buttonNum}`;
+                nameInput.name = `btn${buttonNum}_name`;
+                linkInput.name = `btn${buttonNum}_link`;
+            }
         }
 
         // Tab switching
