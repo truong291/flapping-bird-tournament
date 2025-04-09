@@ -312,7 +312,7 @@
             }
         }
 
-        /* Add styles for custom popup */
+        /* Update popup styles to match game design */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -335,27 +335,36 @@
             border: 2px solid #ffd700;
             width: 300px;
             font-family: 'Press Start 2P', cursive;
+            text-align: center;
         }
 
         .popup-message {
             color: #fff;
             font-size: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
+            line-height: 1.5;
         }
 
         .popup-buttons {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 20px;
         }
 
         .popup-btn {
-            padding: 8px 15px;
+            padding: 10px 20px;
             font-family: 'Press Start 2P', cursive;
             font-size: 12px;
             cursor: pointer;
-            border: none;
+            border: 2px solid #fff;
+            background: transparent;
+            color: #fff;
+            min-width: 80px;
+        }
+
+        .popup-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .popup-yes {
@@ -365,7 +374,11 @@
 
         .popup-no {
             background: #ff4444;
-            color: #fff;
+        }
+
+        .popup-ok {
+            background: #ffd700;
+            color: #2d7b82;
         }
     </style>
 </head>
@@ -546,11 +559,11 @@
         </div>
     </div>
 
-    <!-- Add popup HTML -->
+    <!-- Update popup HTML -->
     <div class="popup-overlay" id="questionPopup">
         <div class="popup-content">
             <div class="popup-message" id="popupMessage"></div>
-            <div class="popup-buttons">
+            <div class="popup-buttons" id="popupButtons">
                 <button class="popup-btn popup-yes" onclick="handleYes()">Yes</button>
                 <button class="popup-btn popup-no" onclick="closePopup()">No</button>
             </div>
@@ -559,6 +572,7 @@
 
     <script>
         let currentCallback = null;
+        let isAlert = false;
 
         // Mock wallet connection
         function connectWallet() {
@@ -570,35 +584,42 @@
         function showQuestion(message, callback) {
             document.getElementById('popupMessage').textContent = message;
             document.getElementById('questionPopup').style.display = 'block';
+            
+            const buttons = document.getElementById('popupButtons');
+            buttons.innerHTML = `
+                <button class="popup-btn popup-yes" onclick="handleYes()">Yes</button>
+                <button class="popup-btn popup-no" onclick="closePopup()">No</button>
+            `;
+            
             currentCallback = callback;
+            isAlert = false;
         }
 
         // Alert popup function (OK only)
         function showAlert(message) {
             document.getElementById('popupMessage').textContent = message;
             document.getElementById('questionPopup').style.display = 'block';
-            document.querySelector('.popup-yes').style.display = 'none';
-            document.querySelector('.popup-no').textContent = 'OK';
-            currentCallback = () => {
-                document.querySelector('.popup-yes').style.display = 'block';
-                document.querySelector('.popup-no').textContent = 'No';
-            };
+            
+            const buttons = document.getElementById('popupButtons');
+            buttons.innerHTML = `
+                <button class="popup-btn popup-ok" onclick="closePopup()">OK</button>
+            `;
+            
+            isAlert = true;
+            currentCallback = null;
         }
 
         function handleYes() {
-            closePopup();
-            if (currentCallback) {
+            if (!isAlert && currentCallback) {
                 currentCallback();
-                currentCallback = null;
             }
+            closePopup();
         }
 
         function closePopup() {
             document.getElementById('questionPopup').style.display = 'none';
-            if (currentCallback) {
-                currentCallback();
-                currentCallback = null;
-            }
+            currentCallback = null;
+            isAlert = false;
         }
 
         // Toggle pause/maintenance buttons with question
