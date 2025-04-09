@@ -344,17 +344,6 @@
             text-align: center;
         }
 
-        .popup-input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid #ffd700;
-            color: #fff;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-        }
-
         .popup-buttons {
             display: flex;
             justify-content: center;
@@ -369,12 +358,12 @@
             border: none;
         }
 
-        .popup-confirm {
+        .popup-yes {
             background: #ffd700;
             color: #2d7b82;
         }
 
-        .popup-cancel {
+        .popup-no {
             background: #ff4444;
             color: #fff;
         }
@@ -561,10 +550,9 @@
     <div class="popup-overlay" id="questionPopup">
         <div class="popup-content">
             <div class="popup-message" id="popupMessage"></div>
-            <input type="text" class="popup-input" id="popupInput">
             <div class="popup-buttons">
-                <button class="popup-btn popup-confirm" onclick="confirmPopup()">Confirm</button>
-                <button class="popup-btn popup-cancel" onclick="closePopup()">Cancel</button>
+                <button class="popup-btn popup-yes" onclick="handleYes()">Yes</button>
+                <button class="popup-btn popup-no" onclick="closePopup()">No</button>
             </div>
         </div>
     </div>
@@ -579,58 +567,49 @@
         }
 
         // Question popup function
-        function showQuestion(message, defaultValue = '', callback) {
+        function showQuestion(message, callback) {
             document.getElementById('popupMessage').textContent = message;
-            document.getElementById('popupInput').value = defaultValue;
             document.getElementById('questionPopup').style.display = 'block';
             currentCallback = callback;
         }
 
-        function confirmPopup() {
-            const input = document.getElementById('popupInput').value;
+        function handleYes() {
             closePopup();
             if (currentCallback) {
-                currentCallback(input);
+                currentCallback();
                 currentCallback = null;
             }
         }
 
         function closePopup() {
             document.getElementById('questionPopup').style.display = 'none';
-            document.getElementById('popupInput').value = '';
             currentCallback = null;
         }
 
         // Toggle pause/maintenance buttons with question
         function togglePause(btn) {
             const action = btn.classList.contains('active') ? 'resume' : 'pause';
-            showQuestion(`Please confirm to ${action} the game. Type 'yes' to proceed:`, '', (input) => {
-                if (input.toLowerCase() === 'yes') {
-                    btn.classList.toggle('active');
-                    btn.textContent = btn.classList.contains('active') ? 'Resume Game' : 'Pause Game';
-                }
+            showQuestion(`Do you want to ${action} the game?`, () => {
+                btn.classList.toggle('active');
+                btn.textContent = btn.classList.contains('active') ? 'Resume Game' : 'Pause Game';
             });
         }
 
         function toggleMaintenance(btn) {
             const action = btn.classList.contains('active') ? 'end' : 'start';
-            showQuestion(`Please confirm to ${action} maintenance. Type 'yes' to proceed:`, '', (input) => {
-                if (input.toLowerCase() === 'yes') {
-                    btn.classList.toggle('active');
-                    btn.textContent = btn.classList.contains('active') ? 'End Maintenance' : 'Maintenance';
-                }
+            showQuestion(`Do you want to ${action} maintenance?`, () => {
+                btn.classList.toggle('active');
+                btn.textContent = btn.classList.contains('active') ? 'End Maintenance' : 'Maintenance';
             });
         }
 
         // Submit bonus to jackpot with question
         function submitBonus() {
             const bonusAmount = document.getElementById('bonusInput').value;
-            showQuestion(`Please confirm to add ${bonusAmount} BNB to jackpot. Type 'yes' to proceed:`, '', (input) => {
-                if (input.toLowerCase() === 'yes') {
-                    console.log('Adding bonus:', bonusAmount, 'BNB');
-                    // Here you would typically send the data to your backend
-                    alert('Bonus added successfully!');
-                }
+            showQuestion(`Do you want to add ${bonusAmount} BNB to jackpot?`, () => {
+                console.log('Adding bonus:', bonusAmount, 'BNB');
+                // Here you would typically send the data to your backend
+                alert('Bonus added successfully!');
             });
         }
 
@@ -641,12 +620,10 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            showQuestion('Please confirm to update game settings. Type \'yes\' to proceed:', '', (input) => {
-                if (input.toLowerCase() === 'yes') {
-                    console.log('Game Settings:', data);
-                    // Here you would typically send the data to your backend
-                    alert('Game settings saved!');
-                }
+            showQuestion('Do you want to update game settings?', () => {
+                console.log('Game Settings:', data);
+                // Here you would typically send the data to your backend
+                alert('Game settings saved!');
             });
         }
 
@@ -657,12 +634,10 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            showQuestion('Please confirm to update bet settings. Type \'yes\' to proceed:', '', (input) => {
-                if (input.toLowerCase() === 'yes') {
-                    console.log('Bet Settings:', data);
-                    // Here you would typically send the data to your backend
-                    alert('Bet settings saved!');
-                }
+            showQuestion('Do you want to update bet settings?', () => {
+                console.log('Bet Settings:', data);
+                // Here you would typically send the data to your backend
+                alert('Bet settings saved!');
             });
         }
 
@@ -680,12 +655,10 @@
                 return;
             }
 
-            showQuestion('Please confirm to update distribution settings. Type \'yes\' to proceed:', '', (input) => {
-                if (input.toLowerCase() === 'yes') {
-                    console.log('Distribution Settings:', data);
-                    // Here you would typically send the data to your backend
-                    alert('Distribution settings saved!');
-                }
+            showQuestion('Do you want to update distribution settings?', () => {
+                console.log('Distribution Settings:', data);
+                // Here you would typically send the data to your backend
+                alert('Distribution settings saved!');
             });
         }
 
