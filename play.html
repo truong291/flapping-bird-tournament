@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Play - Flappy Bird Tournament</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Press Start 2P', cursive;
+            background: #7bc5cd;
+            overflow: hidden; /* Ngăn scroll trên mobile */
+            position: fixed; /* Fix viewport trên mobile */
+            width: 100%;
+            height: 100%;
+            touch-action: none; /* Ngăn tất cả touch actions mặc định */
+        }
+
+        #nav-container {
+            width: 100%;
+            background: #2d7b82;
+            border-bottom: 2px solid #fff;
+        }
+
+        #game-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            touch-action: none;
+        }
+
+        #game-wrapper {
+            width: 288px;
+            height: 512px;
+            position: relative;
+            border: 4px solid #fff;
+            touch-action: none;
+        }
+
+        #container-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        #gameCanvas {
+            position: relative;
+            z-index: 1;
+            width: 288px;
+            height: 512px;
+            image-rendering: pixelated;
+            touch-action: none;
+        }
+
+        #replay-button {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 150px;
+            z-index: 2;
+            background: #f00;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 8px 16px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            display: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #replay-button:hover {
+            background: #a00;
+        }
+
+        #bottom-container {
+            width: 100%;
+            background: #2d7b82;
+            border-top: 2px solid #fff;
+        }
+
+        @media (max-width: 768px) {
+            #nav-container {
+                order: 2;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                background: rgba(0, 0, 0, 0.8);
+                border-top: 2px solid #fff;
+                border-bottom: none;
+                z-index: 100;
+            }
+
+            #game-container {
+                margin: 0;
+                height: 100vh;
+                padding: 10px;
+            }
+
+            #game-wrapper {
+                width: 100%;
+                max-width: 288px;
+                height: calc(100vh - 120px);
+                max-height: 512px;
+                border-width: 2px;
+            }
+
+            #gameCanvas {
+                width: 100%;
+                height: 100%;
+            }
+
+            #replay-button {
+                padding: 12px 24px;
+                font-size: 14px;
+                bottom: 80px;
+            }
+
+            #bottom-container {
+                background: rgba(0, 0, 0, 0.8);
+            }
+        }
+
+        /* Ẩn thanh địa chỉ trên mobile */
+        @media (display-mode: standalone) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="nav-container"></div>
+    
+    <div id="game-container">
+        <div id="game-wrapper">
+            <canvas id="container-background"></canvas>
+            <canvas id="gameCanvas" width="288" height="512"></canvas>
+            <button id="replay-button" onclick="location.reload()">Replay</button>
+        </div>
+    </div>
+
+    <div id="bottom-container"></div>
+
+    <script>
+        // Debug log function
+        function debugLog(message) {
+            console.log(message);
+        }
+
+        // Load navigation
+        fetch('src/components/nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-container').innerHTML = data;
+                debugLog('Navigation loaded');
+                // Đánh dấu tab Play là active
+                setTimeout(() => {
+                    const links = document.querySelectorAll('#tabs a');
+                    links.forEach(link => link.classList.remove('active'));
+                    const playLink = Array.from(links).find(link => link.textContent.includes('Play'));
+                    if (playLink) playLink.classList.add('active');
+                    debugLog('Play tab activated');
+                }, 100);
+            })
+            .catch(error => debugLog('Error loading navigation: ' + error));
+
+        // Load footer
+        fetch('src/components/bottom.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('bottom-container').innerHTML = data;
+                debugLog('Footer loaded');
+            })
+            .catch(error => debugLog('Error loading footer: ' + error));
+
+        // Background logic
+        const containerBgCanvas = document.getElementById('container-background');
+        const containerBgCtx = containerBgCanvas.getContext('2d');
+        containerBgCtx.imageSmoothingEnabled = false;
+
+        const bg = new Image();
+        bg.src = 'src/assets/images/bg.png';
+        const fg = new Image();
+        fg.src = 'src/assets/images/fg.png';
+
+        let fgX = 0;
+        let bgAnimationFrameId;
+        let backgroundLoaded = false;
+
+        // Set canvas size
+        containerBgCanvas.width = 288;
+        containerBgCanvas.height = 512;
+
+        function drawContainerBackground() {
+            if (!backgroundLoaded) {
+                debugLog("Container background not loaded yet.");
+                return;
+            }
+
+            containerBgCtx.clearRect(0, 0, containerBgCanvas.width, containerBgCanvas.height);
+
+            const fgY = containerBgCanvas.height - 112;
+            const bgStartY = containerBgCanvas.height - bg.height;
+
+            // Draw background
+            let bgX = 0;
+            while (bgX < containerBgCanvas.width) {
+                containerBgCtx.drawImage(bg, bgX, bgStartY);
+                bgX += bg.width;
+            }
+
+            // Draw foreground with animation
+            fgX -= 1;
+            if (fgX <= -fg.width) fgX = 0;
+            let fgPosX = fgX;
+            while (fgPosX < containerBgCanvas.width) {
+                containerBgCtx.drawImage(fg, fgPosX, fgY);
+                fgPosX += fg.width;
+            }
+
+            bgAnimationFrameId = requestAnimationFrame(drawContainerBackground);
+        }
+
+        let bgLoaded = false;
+        let fgLoaded = false;
+
+        bg.onload = () => {
+            debugLog("bg.png loaded successfully");
+            bgLoaded = true;
+            if (bgLoaded && fgLoaded) {
+                backgroundLoaded = true;
+                drawContainerBackground();
+            }
+        };
+
+        fg.onload = () => {
+            debugLog("fg.png loaded successfully");
+            fgLoaded = true;
+            if (bgLoaded && fgLoaded) {
+                backgroundLoaded = true;
+                drawContainerBackground();
+            }
+        };
+
+        // Game logic
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        const pipeNorth = new Image();
+        const pipeSouth = new Image();
+        const birdImg = new Image();
+        
+        // Khởi tạo audio context
+        let audioContext;
+        let flyBuffer;
+        let scoreBuffer;
+        let audioInitialized = false;
+
+        // Hàm khởi tạo audio
+        async function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                debugLog("Audio context created");
+                
+                // Load audio files
+                const [flyResponse, scoreResponse] = await Promise.all([
+                    fetch('src/assets/audio/fly.mp3'),
+                    fetch('src/assets/audio/score.mp3')
+                ]);
+
+                const [flyArrayBuffer, scoreArrayBuffer] = await Promise.all([
+                    flyResponse.arrayBuffer(),
+                    scoreResponse.arrayBuffer()
+                ]);
+
+                [flyBuffer, scoreBuffer] = await Promise.all([
+                    audioContext.decodeAudioData(flyArrayBuffer),
+                    audioContext.decodeAudioData(scoreArrayBuffer)
+                ]);
+
+                debugLog("Audio files loaded successfully");
+                audioInitialized = true;
+                checkGameResourcesLoaded();
+                checkGameResourcesLoaded(); // Đếm cho cả 2 file audio
+            } catch (error) {
+                debugLog("Error initializing audio: " + error);
+                // Vẫn cho phép game chạy nếu không load được audio
+                audioInitialized = true;
+                checkGameResourcesLoaded();
+                checkGameResourcesLoaded();
+            }
+        }
+
+        // Hàm phát âm thanh
+        function playSound(buffer) {
+            if (!audioInitialized || !audioContext || !buffer) return;
+            
+            try {
+                const source = audioContext.createBufferSource();
+                source.buffer = buffer;
+                source.connect(audioContext.destination);
+                source.start(0);
+            } catch (error) {
+                debugLog("Error playing sound: " + error);
+            }
+        }
+
+        let gameResourcesLoaded = 0;
+        const totalGameResources = 5; // 3 images + 2 audio files
+        let gameInitialized = false;
+        let resourceLoadTimeout;
+
+        function checkGameResourcesLoaded() {
+            gameResourcesLoaded++;
+            debugLog(`Resource loaded: ${gameResourcesLoaded}/${totalGameResources}`);
+            
+            if (resourceLoadTimeout) {
+                clearTimeout(resourceLoadTimeout);
+            }
+
+            if (gameResourcesLoaded === totalGameResources) {
+                debugLog("All game resources loaded successfully");
+                gameInitialized = true;
+                initializeGame();
+            } else {
+                resourceLoadTimeout = setTimeout(() => {
+                    debugLog("Some resources failed to load, retrying...");
+                    retryLoadResources();
+                }, 2000);
+            }
+        }
+
+        function retryLoadResources() {
+            debugLog("Retrying to load missing resources...");
+            
+            if (!pipeNorth.complete) {
+                debugLog("Retrying pipeNorth.png...");
+                pipeNorth.src = 'src/assets/images/pipeNorth.png';
+            }
+            if (!pipeSouth.complete) {
+                debugLog("Retrying pipeSouth.png...");
+                pipeSouth.src = 'src/assets/images/pipeSouth.png';
+            }
+            if (!birdImg.complete) {
+                debugLog("Retrying bird.png...");
+                birdImg.src = 'src/assets/images/bird.png';
+            }
+            
+            if (!audioInitialized) {
+                debugLog("Retrying audio initialization...");
+                initAudio();
+            }
+        }
+
+        // Thêm event listeners cho images
+        function addImageListener(img, name) {
+            const timeout = setTimeout(() => {
+                debugLog(`${name} load timeout, retrying...`);
+                img.src = img.src;
+            }, 5000);
+
+            img.addEventListener('load', () => {
+                clearTimeout(timeout);
+                debugLog(`${name} loaded successfully`);
+                checkGameResourcesLoaded();
+            }, { once: true });
+
+            img.addEventListener('error', () => {
+                clearTimeout(timeout);
+                debugLog(`Failed to load ${name}`);
+                setTimeout(() => img.src = img.src, 1000);
+            }, { once: true });
+        }
+
+        // Add image listeners
+        addImageListener(pipeNorth, 'pipeNorth.png');
+        addImageListener(pipeSouth, 'pipeSouth.png');
+        addImageListener(birdImg, 'bird.png');
+
+        // Start loading resources
+        debugLog("Starting to load game resources...");
+        pipeNorth.src = 'src/assets/images/pipeNorth.png';
+        pipeSouth.src = 'src/assets/images/pipeSouth.png';
+        birdImg.src = 'src/assets/images/bird.png';
+        initAudio();
+
+        const GRAVITY = 0.25;
+        const LIFT = -6;
+        const PIPE_SPEED = 2;
+        const PIPE_GAP = 125;
+        const PIPE_WIDTH = 52;
+        const GROUND_HEIGHT = 112;
+
+        const bird = {
+            x: (288 - 34) / 2,
+            y: 172,
+            width: 34,
+            height: 24,
+            velocity: 0,
+            frame: 0,
+            animation: [0, 1, 2, 1]
+        };
+
+        let pipes = [];
+        let frameCount = 0;
+        let score = 0;
+        let gameState = 'getReady';
+        let animationFrameId;
+
+        function initializeGame() {
+            debugLog("Initializing game...");
+            if (!gameInitialized) {
+                debugLog("Cannot initialize game - resources not loaded yet");
+                retryLoadResources(); // Try to load missing resources
+                return;
+            }
+            
+            // Double check all resources are actually loaded
+            if (!pipeNorth.complete || !pipeSouth.complete || !birdImg.complete || 
+                !audioInitialized) {
+                debugLog("Some resources not fully loaded, retrying...");
+                retryLoadResources();
+                return;
+            }
+
+            gameState = 'getReady';
+            pipes = [];
+            score = 0;
+            bird.x = (canvas.width - bird.width) / 2;
+            bird.y = (canvas.height / 2 - 20) - 40 - bird.height;
+            bird.velocity = 0;
+            frameCount = 0;
+            document.getElementById('replay-button').style.display = 'none';
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            renderGetReady();
+        }
+
+        function showGetReady() {
+            debugLog("Showing get ready screen...");
+            if (!gameInitialized) {
+                debugLog("Game not initialized yet, waiting for resources...");
+                return;
+            }
+            initializeGame();
+        }
+
+        function renderGetReady() {
+            debugLog("Rendering get ready screen...");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(birdImg, bird.x, bird.y);
+
+            ctx.fillStyle = "#fff";
+            ctx.font = "20px 'Press Start 2P'";
+            ctx.fillText("GET READY", canvas.width / 2 - 80, canvas.height / 2 - 20);
+            ctx.font = "10px 'Press Start 2P'";
+            ctx.fillText("TAP TO START", canvas.width / 2 - 60, canvas.height / 2 + 20);
+
+            if (gameState === 'getReady') {
+                animationFrameId = requestAnimationFrame(renderGetReady);
+            }
+        }
+
+        function resetGame() {
+            debugLog("Resetting game...");
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            initializeGame();
+        }
+
+        function startGame() {
+            debugLog("Starting game...");
+            if (gameState !== 'getReady') return;
+            gameState = 'playing';
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            gameLoop();
+        }
+
+        function spawnPipe() {
+            const minHeight = 50;
+            const maxHeight = canvas.height - GROUND_HEIGHT - PIPE_GAP - minHeight;
+            const height = Math.random() * (maxHeight - minHeight) + minHeight;
+
+            pipes.push({
+                x: canvas.width,
+                top: height,
+                passed: false
+            });
+        }
+
+        function gameLoop() {
+            if (gameState !== 'playing') return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            bird.velocity += GRAVITY;
+            bird.y += bird.velocity;
+            bird.frame = Math.floor(frameCount / 10) % 4;
+            ctx.drawImage(birdImg, bird.x, bird.y);
+
+            if (frameCount % 90 === 0) spawnPipe();
+            frameCount++;
+
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                pipes[i].x -= PIPE_SPEED;
+                const bottomY = pipes[i].top + PIPE_GAP;
+                ctx.drawImage(pipeNorth, pipes[i].x, pipes[i].top - pipeNorth.height);
+                ctx.drawImage(pipeSouth, pipes[i].x, bottomY);
+
+                if (bird.x + bird.width > pipes[i].x && 
+                    bird.x < pipes[i].x + PIPE_WIDTH &&
+                    (bird.y < pipes[i].top || bird.y + bird.height > bottomY)) {
+                    endGame(false);
+                    return;
+                }
+
+                if (!pipes[i].passed && bird.x > pipes[i].x + PIPE_WIDTH) {
+                    score++;
+                    pipes[i].passed = true;
+                    playSound(scoreBuffer);
+                }
+
+                if (pipes[i].x + PIPE_WIDTH < 0) pipes.splice(i, 1);
+            }
+
+            if (bird.y + bird.height > canvas.height - GROUND_HEIGHT || bird.y < 0) {
+                bird.y = (canvas.height - GROUND_HEIGHT) - bird.height;
+                bird.velocity = 0;
+                endGame(false);
+                return;
+            }
+
+            ctx.fillStyle = "#fff";
+            ctx.font = "20px 'Press Start 2P'";
+            ctx.fillText(score, canvas.width / 2 - 10, 50);
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function endGame(won) {
+            debugLog(`Game over. Won: ${won}`);
+            gameState = 'gameOver';
+            if (won) {
+                alert("You won! Return to Home to claim your reward.");
+                window.location.href = 'index.html';
+            } else {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                renderGameOver();
+            }
+        }
+
+        function renderGameOver() {
+            debugLog("Rendering game over screen");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < pipes.length; i++) {
+                const bottomY = pipes[i].top + PIPE_GAP;
+                ctx.drawImage(pipeNorth, pipes[i].x, pipes[i].top - pipeNorth.height);
+                ctx.drawImage(pipeSouth, pipes[i].x, bottomY);
+            }
+            ctx.drawImage(birdImg, bird.x, bird.y);
+
+            ctx.fillStyle = "#fff";
+            ctx.font = "20px 'Press Start 2P'";
+            ctx.fillText("GAME OVER", canvas.width / 2 - 80, canvas.height / 2 - 50);
+
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(canvas.width / 2 - 80, canvas.height / 2 - 20, 160, 60);
+            ctx.fillStyle = "#000";
+            ctx.fillRect(canvas.width / 2 - 76, canvas.height / 2 - 16, 152, 52);
+            ctx.fillStyle = "#fff";
+            ctx.font = "12px 'Press Start 2P'";
+            ctx.fillText("Score: " + score, canvas.width / 2 - 60, canvas.height / 2 + 10);
+
+            document.getElementById('replay-button').style.display = 'block';
+        }
+
+        // Tối ưu kích thước canvas khi resize
+        function resizeGame() {
+            debugLog("Resizing game...");
+            const gameWrapper = document.getElementById('game-wrapper');
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                const maxWidth = Math.min(window.innerWidth - 20, 288); // Trừ padding
+                const maxHeight = Math.min(window.innerHeight - 140, 512); // Trừ nav, bottom và padding
+                const aspectRatio = 288 / 512;
+                
+                let width = maxWidth;
+                let height = width / aspectRatio;
+                
+                if (height > maxHeight) {
+                    height = maxHeight;
+                    width = height * aspectRatio;
+                }
+                
+                gameWrapper.style.width = `${width}px`;
+                gameWrapper.style.height = `${height}px`;
+                
+                // Cập nhật kích thước canvas
+                canvas.style.width = `${width}px`;
+                canvas.style.height = `${height}px`;
+                containerBgCanvas.style.width = `${width}px`;
+                containerBgCanvas.style.height = `${height}px`;
+            } else {
+                gameWrapper.style.width = '288px';
+                gameWrapper.style.height = '512px';
+                canvas.style.width = '288px';
+                canvas.style.height = '512px';
+                containerBgCanvas.style.width = '288px';
+                containerBgCanvas.style.height = '512px';
+            }
+        }
+
+        // Thêm xử lý cho mobile touch
+        document.addEventListener('touchstart', async (e) => {
+            e.preventDefault();
+            const replayButton = document.getElementById('replay-button');
+            
+            // Khởi tạo audio context nếu cần (yêu cầu user interaction)
+            if (audioContext && audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+            
+            // Kiểm tra xem người dùng có tap vào nút replay không
+            if (gameState === 'gameOver' && replayButton.style.display === 'block') {
+                const touch = e.touches[0];
+                const rect = replayButton.getBoundingClientRect();
+                if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                    resetGame();
+                    return;
+                }
+            }
+            
+            // Xử lý touch cho game
+            if (gameState === 'getReady') {
+                startGame();
+            } else if (gameState === 'playing') {
+                bird.velocity = LIFT;
+                playSound(flyBuffer);
+            }
+        }, { passive: false });
+
+        // Thêm xử lý cho click chuột
+        canvas.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // Khởi tạo audio context nếu cần
+            if (audioContext && audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+            
+            if (gameState === 'getReady') {
+                startGame();
+            } else if (gameState === 'playing') {
+                bird.velocity = LIFT;
+                playSound(flyBuffer);
+            }
+        });
+
+        // Thêm xử lý cho phím space
+        document.addEventListener('keydown', async (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                
+                // Khởi tạo audio context nếu cần
+                if (audioContext && audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+                
+                if (gameState === 'getReady') {
+                    startGame();
+                } else if (gameState === 'playing') {
+                    bird.velocity = LIFT;
+                    playSound(flyBuffer);
+                }
+            }
+        });
+
+        // Khởi tạo game
+        window.addEventListener('load', () => {
+            debugLog("Window loaded");
+            resizeGame();
+            if (gameResourcesLoaded === totalGameResources && !gameInitialized) {
+                debugLog("All resources already loaded on window load");
+                gameInitialized = true;
+                initializeGame();
+            }
+        });
+
+        // Đảm bảo hiển thị get ready khi DOM đã sẵn sàng
+        document.addEventListener('DOMContentLoaded', () => {
+            debugLog("DOM Content Loaded");
+            if (gameResourcesLoaded === totalGameResources && !gameInitialized) {
+                debugLog("All resources already loaded on DOMContentLoaded");
+                gameInitialized = true;
+                initializeGame();
+            }
+        });
+
+        // Kiểm tra nếu resources đã load xong
+        if (document.readyState === 'complete' && gameResourcesLoaded === totalGameResources && !gameInitialized) {
+            debugLog("All resources already loaded on readyState complete");
+            gameInitialized = true;
+            initializeGame();
+        }
+
+        window.addEventListener('resize', resizeGame);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resizeGame, 100);
+        });
+
+        setInterval(() => {
+            if (gameState === 'playing' && score >= 10) endGame(true);
+        }, 100);
+    </script>
+</body>
+</html>

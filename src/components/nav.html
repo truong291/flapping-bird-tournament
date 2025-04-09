@@ -1,0 +1,281 @@
+<nav>
+    <div class="nav-container">
+        <div class="nav-menu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="rank.html" class="nav-link">Rank</a>
+            <a href="player.html" class="nav-link">Wallet</a>
+            <a href="docs.html" class="nav-link">Docs</a>
+        </div>
+        <div class="nav-wallet">
+            <button id="connectWallet" class="connect-btn">Connect Wallet</button>
+        </div>
+    </div>
+</nav>
+
+<!-- Popup Modal -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h2 class="modal-title"></h2>
+        <p class="modal-message"></p>
+        <div class="modal-buttons">
+            <button class="modal-btn yes-btn">Yes</button>
+            <button class="modal-btn no-btn">No</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    nav {
+        background: #2d7b82;
+        padding: 5px 0;
+        border-bottom: 2px solid #fff;
+        height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .nav-menu {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .nav-link {
+        color: #fff;
+        text-decoration: none;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 11px;
+        padding: 4px 10px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        line-height: 1;
+    }
+
+    .nav-link:hover {
+        border-color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-wallet {
+        margin-left: auto;
+    }
+
+    .connect-btn {
+        background: #ffd700;
+        color: #2d7b82;
+        border: none;
+        padding: 6px 12px;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        line-height: 1;
+    }
+
+    .connect-btn:hover {
+        background: #ffed4a;
+        transform: translateY(-1px);
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 2000;
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #2d7b82;
+        padding: 20px;
+        border: 2px solid #fff;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .modal-title {
+        color: #fff;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .modal-message {
+        color: #fff;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .modal-btn {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 10px;
+        padding: 8px 16px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .yes-btn {
+        background: #2ecc71;
+        color: #fff;
+    }
+
+    .no-btn {
+        background: #e74c3c;
+        color: #fff;
+    }
+
+    .yes-btn:hover {
+        background: #27ae60;
+    }
+
+    .no-btn:hover {
+        background: #c0392b;
+    }
+
+    @media (max-width: 768px) {
+        nav {
+            height: auto;
+            padding: 5px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(45, 123, 130, 0.95);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-container {
+            flex-direction: row;
+            justify-content: center;
+            padding: 0 10px;
+            gap: 5px;
+        }
+
+        .nav-menu {
+            flex-wrap: nowrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .nav-link {
+            font-size: 9px;
+            padding: 3px 8px;
+        }
+
+        .connect-btn {
+            font-size: 9px;
+            padding: 4px 10px;
+        }
+
+        .nav-wallet {
+            position: absolute;
+            right: 10px;
+        }
+
+        .modal-content {
+            width: 85%;
+            padding: 15px;
+        }
+
+        .modal-title {
+            font-size: 12px;
+        }
+
+        .modal-message {
+            font-size: 10px;
+        }
+
+        .modal-btn {
+            font-size: 9px;
+            padding: 6px 12px;
+        }
+    }
+</style>
+
+<script>
+    // Hàm hiển thị modal xác nhận
+    function showConfirmModal(title, message, onConfirm) {
+        const modal = document.getElementById('confirmModal');
+        const modalTitle = modal.querySelector('.modal-title');
+        const modalMessage = modal.querySelector('.modal-message');
+        const yesBtn = modal.querySelector('.yes-btn');
+        const noBtn = modal.querySelector('.no-btn');
+
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+
+        modal.style.display = 'block';
+
+        yesBtn.onclick = () => {
+            modal.style.display = 'none';
+            onConfirm();
+        };
+
+        noBtn.onclick = () => {
+            modal.style.display = 'none';
+        };
+
+        // Đóng modal khi click bên ngoài
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    }
+
+    // Xử lý sự kiện click nút Connect Wallet
+    document.getElementById('connectWallet').addEventListener('click', function() {
+        showConfirmModal(
+            'Connect Wallet',
+            'Do you want to connect your wallet?',
+            function() {
+                // Xử lý khi user click Yes
+                alert('Connecting wallet...');
+            }
+        );
+    });
+
+    // Xử lý sự kiện click nút Submit Jackpot
+    document.getElementById('submitJackpot').addEventListener('click', function() {
+        showConfirmModal(
+            'Submit Jackpot',
+            'Are you sure you want to submit your score for the jackpot?',
+            function() {
+                // Xử lý khi user click Yes
+                alert('Submitting score for jackpot...');
+            }
+        );
+    });
+</script> 

@@ -1,0 +1,13 @@
+{
+  "name": "flapping-bird-tournament",
+  "version": "1.0.0",
+  "description": "Flapping Bird Tournament Game",
+  "scripts": {
+    "dev": "serve",
+    "build": "powershell -Command \"if (!(Test-Path dist)) { New-Item -ItemType Directory -Path dist }; Copy-Item -Path 'src\\*' -Destination dist -Recurse -Force; Copy-Item -Path 'index.html','play.html' -Destination dist -Force\"",
+    "start": "serve dist"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+} 
