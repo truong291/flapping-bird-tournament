@@ -348,9 +348,10 @@
                         <div class="stat-value">0.00 BNB</div>
                     </div>
                 </div>
-                <div style="text-align: center;">
+                <div class="stat-item">
                     <div class="stat-label">Bonus to Jackpot</div>
-                    <input type="number" class="bonus-input" placeholder="0.00 BNB" step="0.01">
+                    <input type="number" id="bonusInput" class="bonus-input" placeholder="0.00 BNB" step="0.01" min="0">
+                    <button onclick="submitBonus()" class="control-btn" style="width: auto; margin-top: 10px;">Submit</button>
                 </div>
             </div>
 
@@ -496,15 +497,85 @@
             document.getElementById('adminContent').style.display = 'block';
         }
 
-        // Toggle pause/maintenance buttons
+        // Confirmation popup function
+        function showConfirmation(message, callback) {
+            if (confirm(message)) {
+                callback();
+            }
+        }
+
+        // Toggle pause/maintenance buttons with confirmation
         function togglePause(btn) {
-            btn.classList.toggle('active');
-            btn.textContent = btn.classList.contains('active') ? 'Resume Game' : 'Pause Game';
+            showConfirmation('Are you sure you want to ' + (btn.classList.contains('active') ? 'resume' : 'pause') + ' the game?', () => {
+                btn.classList.toggle('active');
+                btn.textContent = btn.classList.contains('active') ? 'Resume Game' : 'Pause Game';
+            });
         }
 
         function toggleMaintenance(btn) {
-            btn.classList.toggle('active');
-            btn.textContent = btn.classList.contains('active') ? 'End Maintenance' : 'Maintenance';
+            showConfirmation('Are you sure you want to ' + (btn.classList.contains('active') ? 'end' : 'start') + ' maintenance?', () => {
+                btn.classList.toggle('active');
+                btn.textContent = btn.classList.contains('active') ? 'End Maintenance' : 'Maintenance';
+            });
+        }
+
+        // Submit bonus to jackpot
+        function submitBonus() {
+            const bonusAmount = document.getElementById('bonusInput').value;
+            showConfirmation('Are you sure you want to add ' + bonusAmount + ' BNB to jackpot?', () => {
+                console.log('Adding bonus:', bonusAmount, 'BNB');
+                // Here you would typically send the data to your backend
+                alert('Bonus added successfully!');
+            });
+        }
+
+        // Submit game settings with confirmation
+        function submitGameSettings(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            showConfirmation('Are you sure you want to update game settings?', () => {
+                console.log('Game Settings:', data);
+                // Here you would typically send the data to your backend
+                alert('Game settings saved!');
+            });
+        }
+
+        // Submit bet settings with confirmation
+        function submitBetSettings(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            showConfirmation('Are you sure you want to update bet settings?', () => {
+                console.log('Bet Settings:', data);
+                // Here you would typically send the data to your backend
+                alert('Bet settings saved!');
+            });
+        }
+
+        // Submit distribution settings with confirmation
+        function submitDistributionSettings(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Validate total percentage = 100
+            const total = Object.values(data).reduce((sum, value) => sum + Number(value), 0);
+            if (total !== 100) {
+                alert('Total distribution must equal 100%');
+                return;
+            }
+
+            showConfirmation('Are you sure you want to update distribution settings?', () => {
+                console.log('Distribution Settings:', data);
+                // Here you would typically send the data to your backend
+                alert('Distribution settings saved!');
+            });
         }
 
         // Tab switching
@@ -596,47 +667,6 @@
                 label.value = `Top ${i + 1}`;
                 input.name = `dist${i + 1}`;
             }
-        }
-
-        // Submit game settings
-        function submitGameSettings(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            console.log('Game Settings:', data);
-            // Here you would typically send the data to your backend
-            alert('Game settings saved!');
-        }
-
-        // Submit bet settings
-        function submitBetSettings(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            console.log('Bet Settings:', data);
-            // Here you would typically send the data to your backend
-            alert('Bet settings saved!');
-        }
-
-        // Submit distribution settings
-        function submitDistributionSettings(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            
-            // Validate total percentage = 100
-            const total = Object.values(data).reduce((sum, value) => sum + Number(value), 0);
-            if (total !== 100) {
-                alert('Total distribution must equal 100%');
-                return;
-            }
-
-            console.log('Distribution Settings:', data);
-            // Here you would typically send the data to your backend
-            alert('Distribution settings saved!');
         }
     </script>
 </body>
