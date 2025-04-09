@@ -553,7 +553,6 @@
                     <button class="tab-btn" onclick="switchTab('bet')">Bet Setting</button>
                     <button class="tab-btn" onclick="switchTab('distribution')">Distribution Setting</button>
                     <button class="tab-btn" onclick="switchTab('telegram')">Telegram Notify</button>
-                    <button class="tab-btn" onclick="switchTab('blacklist')">Blacklist</button>
                 </div>
 
                 <!-- Game Settings -->
@@ -721,9 +720,12 @@
                         <button type="submit" class="submit-btn" style="margin: 0;">Send Notification</button>
                     </form>
                 </div>
+            </div>
 
-                <!-- Blacklist Settings -->
-                <div class="tab-content" id="blacklistTab">
+            <!-- Blacklist Section -->
+            <div class="settings-section" style="margin-top: 30px;">
+                <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 16px;">Blacklist Management</h3>
+                <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 5px;">
                     <form id="blacklistForm" onsubmit="submitBlacklist(event)">
                         <div class="setting-item" style="max-width: 600px;">
                             <div style="margin-bottom: 20px;">
