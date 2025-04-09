@@ -392,6 +392,64 @@
                 grid-template-columns: 1fr 1fr;
             }
         }
+
+        /* Add new styles for telegram notify section */
+        .telegram-grid {
+            display: grid;
+            grid-template-columns: minmax(200px, 1fr);
+            gap: 10px;
+            max-width: 600px;
+        }
+
+        .telegram-button-grid {
+            display: grid;
+            grid-template-columns: minmax(200px, 1fr);
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .telegram-button-grid {
+                grid-template-columns: 200px 200px 120px;
+            }
+        }
+
+        .telegram-input {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .telegram-textarea {
+            width: 100%;
+            max-width: 200px;
+            height: 100px;
+            resize: vertical;
+        }
+
+        .telegram-line-input {
+            width: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .telegram-button-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .telegram-input,
+            .telegram-textarea {
+                max-width: 100%;
+            }
+
+            .telegram-line-container {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .telegram-line-input {
+                flex: 1;
+                max-width: 100px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -596,13 +654,15 @@
                 <!-- Telegram Notify Settings -->
                 <div class="tab-content" id="telegramTab">
                     <form id="telegramNotifyForm" onsubmit="submitTelegramNotify(event)">
-                        <div class="setting-item">
-                            <label class="setting-label">Image URL</label>
-                            <input type="url" class="setting-input" name="imageUrl" placeholder="https://example.com/image.jpg" style="width: 100%;">
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Message Text</label>
-                            <textarea class="setting-input" name="messageText" placeholder="Enter your message here..." style="width: 100%; height: 100px; resize: vertical;"></textarea>
+                        <div class="telegram-grid">
+                            <div class="setting-item">
+                                <label class="setting-label">Image URL</label>
+                                <input type="url" class="setting-input telegram-input" name="imageUrl" placeholder="https://example.com/image.jpg">
+                            </div>
+                            <div class="setting-item">
+                                <label class="setting-label">Message Text</label>
+                                <textarea class="setting-input telegram-textarea" name="messageText" placeholder="Enter your message here..."></textarea>
+                            </div>
                         </div>
                         
                         <!-- Inline Buttons Section -->
@@ -610,11 +670,11 @@
                             <div class="setting-row">
                                 <div class="setting-item" style="flex: 1;">
                                     <label class="setting-label">Button 1</label>
-                                    <div style="display: grid; grid-template-columns: 2fr 3fr 1fr; gap: 10px; margin-bottom: 10px;">
-                                        <input type="text" class="setting-input" name="btn1_name" placeholder="Button Name">
-                                        <input type="url" class="setting-input" name="btn1_link" placeholder="https://">
-                                        <div style="display: flex; gap: 10px;">
-                                            <input type="number" class="setting-input" name="btn1_line" placeholder="Line" min="1" value="1" style="width: 100%;">
+                                    <div class="telegram-button-grid">
+                                        <input type="text" class="setting-input telegram-input" name="btn1_name" placeholder="Button Name">
+                                        <input type="url" class="setting-input telegram-input" name="btn1_link" placeholder="https://">
+                                        <div class="telegram-line-container">
+                                            <input type="number" class="setting-input telegram-line-input" name="btn1_line" placeholder="Line" min="1" value="1">
                                             <button type="button" class="delete-btn" onclick="deleteTelegramButton(this)">Delete</button>
                                         </div>
                                     </div>
@@ -852,11 +912,11 @@
             newButton.innerHTML = `
                 <div class="setting-item" style="flex: 1;">
                     <label class="setting-label">Button ${buttonCount}</label>
-                    <div style="display: grid; grid-template-columns: 2fr 3fr 1fr; gap: 10px; margin-bottom: 10px;">
-                        <input type="text" class="setting-input" name="btn${buttonCount}_name" placeholder="Button Name">
-                        <input type="url" class="setting-input" name="btn${buttonCount}_link" placeholder="https://">
-                        <div style="display: flex; gap: 10px;">
-                            <input type="number" class="setting-input" name="btn${buttonCount}_line" placeholder="Line" min="1" value="1" style="width: 100%;">
+                    <div class="telegram-button-grid">
+                        <input type="text" class="setting-input telegram-input" name="btn${buttonCount}_name" placeholder="Button Name">
+                        <input type="url" class="setting-input telegram-input" name="btn${buttonCount}_link" placeholder="https://">
+                        <div class="telegram-line-container">
+                            <input type="number" class="setting-input telegram-line-input" name="btn${buttonCount}_line" placeholder="Line" min="1" value="1">
                             <button type="button" class="delete-btn" onclick="deleteTelegramButton(this)">Delete</button>
                         </div>
                     </div>
