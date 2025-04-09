@@ -311,6 +311,73 @@
                 min-width: 120px;
             }
         }
+
+        /* Add styles for custom popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .popup-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2d7b82;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ffd700;
+            width: 300px;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .popup-message {
+            color: #fff;
+            font-size: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .popup-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #ffd700;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .popup-btn {
+            padding: 8px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .popup-confirm {
+            background: #ffd700;
+            color: #2d7b82;
+        }
+
+        .popup-cancel {
+            background: #ff4444;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -490,74 +557,116 @@
         </div>
     </div>
 
+    <!-- Add popup HTML -->
+    <div class="popup-overlay" id="questionPopup">
+        <div class="popup-content">
+            <div class="popup-message" id="popupMessage"></div>
+            <input type="text" class="popup-input" id="popupInput">
+            <div class="popup-buttons">
+                <button class="popup-btn popup-confirm" onclick="confirmPopup()">Confirm</button>
+                <button class="popup-btn popup-cancel" onclick="closePopup()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let currentCallback = null;
+
         // Mock wallet connection
         function connectWallet() {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
         }
 
-        // Confirmation popup function
-        function showConfirmation(message, callback) {
-            if (confirm(message)) {
-                callback();
+        // Question popup function
+        function showQuestion(message, defaultValue = '', callback) {
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('popupInput').value = defaultValue;
+            document.getElementById('questionPopup').style.display = 'block';
+            currentCallback = callback;
+        }
+
+        function confirmPopup() {
+            const input = document.getElementById('popupInput').value;
+            closePopup();
+            if (currentCallback) {
+                currentCallback(input);
+                currentCallback = null;
             }
         }
 
-        // Toggle pause/maintenance buttons with confirmation
+        function closePopup() {
+            document.getElementById('questionPopup').style.display = 'none';
+            document.getElementById('popupInput').value = '';
+            currentCallback = null;
+        }
+
+        // Toggle pause/maintenance buttons with question
         function togglePause(btn) {
-            showConfirmation('Are you sure you want to ' + (btn.classList.contains('active') ? 'resume' : 'pause') + ' the game?', () => {
-                btn.classList.toggle('active');
-                btn.textContent = btn.classList.contains('active') ? 'Resume Game' : 'Pause Game';
+            const action = btn.classList.contains('active') ? 'resume' : 'pause';
+            showQuestion(`Please confirm to ${action} the game. Type 'yes' to proceed:`, '', (input) => {
+                if (input.toLowerCase() === 'yes') {
+                    btn.classList.toggle('active');
+                    btn.textContent = btn.classList.contains('active') ? 'Resume Game' : 'Pause Game';
+                }
             });
         }
 
         function toggleMaintenance(btn) {
-            showConfirmation('Are you sure you want to ' + (btn.classList.contains('active') ? 'end' : 'start') + ' maintenance?', () => {
-                btn.classList.toggle('active');
-                btn.textContent = btn.classList.contains('active') ? 'End Maintenance' : 'Maintenance';
+            const action = btn.classList.contains('active') ? 'end' : 'start';
+            showQuestion(`Please confirm to ${action} maintenance. Type 'yes' to proceed:`, '', (input) => {
+                if (input.toLowerCase() === 'yes') {
+                    btn.classList.toggle('active');
+                    btn.textContent = btn.classList.contains('active') ? 'End Maintenance' : 'Maintenance';
+                }
             });
         }
 
-        // Submit bonus to jackpot
+        // Submit bonus to jackpot with question
         function submitBonus() {
             const bonusAmount = document.getElementById('bonusInput').value;
-            showConfirmation('Are you sure you want to add ' + bonusAmount + ' BNB to jackpot?', () => {
-                console.log('Adding bonus:', bonusAmount, 'BNB');
-                // Here you would typically send the data to your backend
-                alert('Bonus added successfully!');
+            showQuestion(`Please confirm to add ${bonusAmount} BNB to jackpot. Type 'yes' to proceed:`, '', (input) => {
+                if (input.toLowerCase() === 'yes') {
+                    console.log('Adding bonus:', bonusAmount, 'BNB');
+                    // Here you would typically send the data to your backend
+                    alert('Bonus added successfully!');
+                }
             });
         }
 
-        // Submit game settings with confirmation
+        // Submit game settings with question
         function submitGameSettings(event) {
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            showConfirmation('Are you sure you want to update game settings?', () => {
-                console.log('Game Settings:', data);
-                // Here you would typically send the data to your backend
-                alert('Game settings saved!');
+            showQuestion('Please confirm to update game settings. Type \'yes\' to proceed:', '', (input) => {
+                if (input.toLowerCase() === 'yes') {
+                    console.log('Game Settings:', data);
+                    // Here you would typically send the data to your backend
+                    alert('Game settings saved!');
+                }
             });
         }
 
-        // Submit bet settings with confirmation
+        // Submit bet settings with question
         function submitBetSettings(event) {
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            showConfirmation('Are you sure you want to update bet settings?', () => {
-                console.log('Bet Settings:', data);
-                // Here you would typically send the data to your backend
-                alert('Bet settings saved!');
+            showQuestion('Please confirm to update bet settings. Type \'yes\' to proceed:', '', (input) => {
+                if (input.toLowerCase() === 'yes') {
+                    console.log('Bet Settings:', data);
+                    // Here you would typically send the data to your backend
+                    alert('Bet settings saved!');
+                }
             });
         }
 
-        // Submit distribution settings with confirmation
+        // Submit distribution settings with question
         function submitDistributionSettings(event) {
             event.preventDefault();
             const form = event.target;
@@ -571,10 +680,12 @@
                 return;
             }
 
-            showConfirmation('Are you sure you want to update distribution settings?', () => {
-                console.log('Distribution Settings:', data);
-                // Here you would typically send the data to your backend
-                alert('Distribution settings saved!');
+            showQuestion('Please confirm to update distribution settings. Type \'yes\' to proceed:', '', (input) => {
+                if (input.toLowerCase() === 'yes') {
+                    console.log('Distribution Settings:', data);
+                    // Here you would typically send the data to your backend
+                    alert('Distribution settings saved!');
+                }
             });
         }
 
