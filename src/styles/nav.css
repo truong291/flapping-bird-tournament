@@ -9,6 +9,7 @@
     left: 0;
     right: 0;
     z-index: 1000;
+    height: 60px;
 }
 
 .nav-menu {
@@ -17,6 +18,9 @@
     gap: 30px;
     margin: 0 auto;
     height: 100%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .nav-link {
@@ -25,6 +29,9 @@
     font-size: 16px;
     transition: color 0.3s;
     padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 .nav-link:hover {
@@ -40,7 +47,10 @@
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s;
-    margin-left: auto;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .connect-wallet-btn:hover {
@@ -105,15 +115,24 @@
     .nav {
         flex-direction: column;
         padding: 10px;
+        height: auto;
     }
 
     .nav-menu {
+        position: static;
+        transform: none;
         flex-direction: column;
         gap: 15px;
         margin: 15px 0;
     }
 
+    .nav-link {
+        height: auto;
+    }
+
     .connect-wallet-btn {
+        position: static;
+        transform: none;
         margin: 15px 0 0 0;
     }
 } 
