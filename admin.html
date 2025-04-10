@@ -1245,6 +1245,9 @@
         function disconnectWallet() {
             showQuestion('Are you sure you want to disconnect your wallet?', () => {
                 WalletSession.disconnect();
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('adminContent').style.display = 'none';
+                showAlert('Wallet disconnected successfully!');
             });
         }
 
