@@ -554,220 +554,45 @@
             <!-- Settings Section -->
             <div class="settings-section">
                 <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('game')">Game Setting</button>
-                    <button class="tab-btn" onclick="switchTab('bet')">Bet Setting</button>
-                    <button class="tab-btn" onclick="switchTab('distribution')">Distribution Setting</button>
-                    <button class="tab-btn" onclick="switchTab('telegram')">Telegram Notify</button>
+                    <button class="tab-btn active">Blacklist Management</button>
                 </div>
-
-                <!-- Game Settings -->
-                <div class="tab-content active" id="gameTab">
-                    <form onsubmit="submitGameSettings(event)">
-                        <div class="game-settings-grid">
-                            <!-- Game Settings Column -->
-                            <div>
-                                <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 14px;">Game Settings</h3>
-                                <div class="setting-item">
-                                    <label class="setting-label">PIPE GAP</label>
-                                    <input type="number" class="setting-input" name="pipeGap" value="125" step="1" required>
-                                </div>
-                                <div class="setting-item">
-                                    <label class="setting-label">GRAVITY</label>
-                                    <input type="number" class="setting-input" name="gravity" value="0.25" step="0.01" required>
-                                </div>
-                                <div class="setting-item">
-                                    <label class="setting-label">LIFT</label>
-                                    <input type="number" class="setting-input" name="lift" value="-6" step="1" required>
-                                </div>
-                                <div class="setting-item">
-                                    <label class="setting-label">PIPE SPEED</label>
-                                    <input type="number" class="setting-input" name="pipeSpeed" value="2" step="1" required>
-                                </div>
-                            </div>
-                            
-                            <!-- Round Time Column -->
-                            <div>
-                                <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 14px;">Round Time</h3>
-                                <div class="setting-item">
-                                    <label class="setting-label">Play Time (minutes)</label>
-                                    <input type="number" class="setting-input" name="playTime" value="50" step="1" required>
-                                </div>
-                                <div class="setting-item">
-                                    <label class="setting-label">Ranking & Reward Time (minutes)</label>
-                                    <input type="number" class="setting-input" name="rewardTime" value="5" step="1" required>
-                                </div>
-                                <div class="setting-item">
-                                    <label class="setting-label">New Round Preparation Time (minutes)</label>
-                                    <input type="number" class="setting-input" name="prepTime" value="5" step="1" required>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="control-btn" style="margin-top: 20px;">Save Settings</button>
-                    </form>
-                </div>
-
-                <!-- Bet Settings -->
-                <div class="tab-content" id="betTab">
-                    <form id="betSettingsForm" onsubmit="submitBetSettings(event)">
-                        <div id="betInputs">
-                            <div class="setting-row">
-                                <div class="setting-item">
-                                    <label class="setting-label">Bet 1</label>
-                                    <input type="number" class="setting-input" name="bet1" placeholder="0.1 BNB" step="0.01" required min="0.01">
-                                    <div class="error-message">Please enter a valid bet amount</div>
-                                </div>
-                            </div>
-                            <div class="setting-row">
-                                <div class="setting-item">
-                                    <label class="setting-label">Bet 2</label>
-                                    <input type="number" class="setting-input" name="bet2" placeholder="0.08 BNB" step="0.01" required min="0.01">
-                                    <div class="error-message">Please enter a valid bet amount</div>
-                                </div>
-                                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
-                            </div>
-                            <div class="setting-row">
-                                <div class="setting-item">
-                                    <label class="setting-label">Bet 3</label>
-                                    <input type="number" class="setting-input" name="bet3" placeholder="0.06 BNB" step="0.01" required min="0.01">
-                                    <div class="error-message">Please enter a valid bet amount</div>
-                                </div>
-                                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
-                            </div>
-                            <div class="setting-row">
-                                <div class="setting-item">
-                                    <label class="setting-label">Bet 4</label>
-                                    <input type="number" class="setting-input" name="bet4" placeholder="0.04 BNB" step="0.01" required min="0.01">
-                                    <div class="error-message">Please enter a valid bet amount</div>
-                                </div>
-                                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
-                            </div>
-                            <div class="setting-row">
-                                <div class="setting-item">
-                                    <label class="setting-label">Bet 5</label>
-                                    <input type="number" class="setting-input" name="bet5" placeholder="0.02 BNB" step="0.01" required min="0.01">
-                                    <div class="error-message">Please enter a valid bet amount</div>
-                                </div>
-                                <button type="button" class="delete-btn" onclick="deleteBet(this)">Delete</button>
-                            </div>
-                        </div>
-                        <button type="button" class="add-btn" onclick="addBetInput()">Add Bet</button>
-                        <button type="submit" class="submit-btn">Save Bet Settings</button>
-                    </form>
-                </div>
-
-                <!-- Distribution Settings -->
-                <div class="tab-content" id="distributionTab">
-                    <form id="distributionSettingsForm" onsubmit="submitDistributionSettings(event)">
-                        <div id="distributionInputs">
-                            <div class="distribution-item">
-                                <input type="text" class="distribution-input" value="Top 1" readonly>
-                                <input type="number" class="distribution-input" name="dist1" placeholder="50%" value="50" required min="0" max="100">
-                                <div class="error-message">Please enter a value between 0 and 100</div>
-                            </div>
-                            <div class="distribution-item">
-                                <input type="text" class="distribution-input" value="Top 2" readonly>
-                                <input type="number" class="distribution-input" name="dist2" placeholder="20%" value="20" required min="0" max="100">
-                                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
-                                <div class="error-message">Please enter a value between 0 and 100</div>
-                            </div>
-                            <div class="distribution-item">
-                                <input type="text" class="distribution-input" value="Top 3" readonly>
-                                <input type="number" class="distribution-input" name="dist3" placeholder="15%" value="15" required min="0" max="100">
-                                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
-                                <div class="error-message">Please enter a value between 0 and 100</div>
-                            </div>
-                            <div class="distribution-item">
-                                <input type="text" class="distribution-input" value="Top 4" readonly>
-                                <input type="number" class="distribution-input" name="dist4" placeholder="10%" value="10" required min="0" max="100">
-                                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
-                                <div class="error-message">Please enter a value between 0 and 100</div>
-                            </div>
-                            <div class="distribution-item">
-                                <input type="text" class="distribution-input" value="Top 5" readonly>
-                                <input type="number" class="distribution-input" name="dist5" placeholder="5%" value="5" required min="0" max="100">
-                                <button type="button" class="delete-btn" onclick="deleteDistribution(this)">Delete</button>
-                                <div class="error-message">Please enter a value between 0 and 100</div>
-                            </div>
-                        </div>
-                        <button type="button" class="add-btn" onclick="addDistributionInput()">Add Distribution</button>
-                        <button type="submit" class="submit-btn">Save Distribution Settings</button>
-                    </form>
-                </div>
-
-                <!-- Telegram Notify Settings -->
-                <div class="tab-content" id="telegramTab">
-                    <form id="telegramNotifyForm" onsubmit="submitTelegramNotify(event)">
-                        <div class="setting-item">
-                            <label class="setting-label">Image URL</label>
-                            <input type="url" class="setting-input telegram-input" name="imageUrl" placeholder="https://example.com/image.jpg">
-                        </div>
-                        <div class="setting-item">
-                            <label class="setting-label">Message Text</label>
-                            <textarea class="setting-input telegram-textarea" name="messageText" placeholder="Enter your message here..."></textarea>
-                        </div>
-                        
-                        <!-- Inline Buttons Section -->
-                        <div id="buttonInputs">
-                            <div class="setting-row">
-                                <div class="setting-item">
-                                    <label class="setting-label">Button 1</label>
-                                    <div class="telegram-button-row">
-                                        <input type="text" class="setting-input telegram-button-name" name="btn1_name" placeholder="Button Name">
-                                        <input type="url" class="setting-input telegram-button-url" name="btn1_link" placeholder="https://">
-                                        <input type="number" class="setting-input telegram-button-line" name="btn1_line" placeholder="Line" min="1" value="1">
-                                        <button type="button" class="delete-btn" onclick="deleteTelegramButton(this)">Delete</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <button type="button" class="add-btn" style="margin-bottom: 20px;">Add Button</button>
-                        <button type="submit" class="submit-btn" style="margin: 0;">Send Notification</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Blacklist Management -->
-            <div class="settings-section" style="margin-top: 2rem;">
-                <div style="background: rgba(0, 0, 0, 0.2); padding: 1.5rem; border-radius: 0.5rem;">
-                    <h3 style="color: #ffd700; font-size: 1.2rem; font-family: 'Press Start 2P', cursive; margin-bottom: 1.5rem;">Blacklist Management</h3>
-                    
+                <div class="tab-content active">
                     <!-- Form -->
-                    <form id="blacklistForm" onsubmit="submitBlacklist(event)" style="margin-bottom: 2rem;">
-                        <div style="display: grid; grid-template-columns: 1fr 2fr auto; gap: 1rem; align-items: end;">
-                            <div>
-                                <label style="display: block; margin-bottom: 0.5rem; color: #ffd700; font-size: 0.8rem; font-family: 'Press Start 2P', cursive;">Wallet Address</label>
-                                <input type="text" class="setting-input" name="walletAddress" placeholder="0x..." style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.3); border: 1px solid #ffd700; color: #fff; border-radius: 0.5rem; font-family: 'Press Start 2P', cursive; font-size: 0.75rem;">
+                    <form id="blacklistForm" onsubmit="submitBlacklist(event)">
+                        <div class="setting-row">
+                            <div class="setting-item" style="flex: 1;">
+                                <label class="setting-label">Wallet Address</label>
+                                <input type="text" class="setting-input" name="walletAddress" placeholder="0x...">
                             </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 0.5rem; color: #ffd700; font-size: 0.8rem; font-family: 'Press Start 2P', cursive;">Reason</label>
-                                <input type="text" class="setting-input" name="reason" placeholder="Enter reason for blacklisting..." style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.3); border: 1px solid #ffd700; color: #fff; border-radius: 0.5rem; font-family: 'Press Start 2P', cursive; font-size: 0.75rem;">
+                            <div class="setting-item" style="flex: 2;">
+                                <label class="setting-label">Reason</label>
+                                <input type="text" class="setting-input" name="reason" placeholder="Enter reason for blacklisting...">
                             </div>
-                            <div>
-                                <button type="submit" class="control-btn" style="width: 100%; background: #ffd700; color: #000; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; cursor: pointer; font-weight: 500; font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">Blacklist</button>
+                            <div class="setting-item" style="align-self: flex-end;">
+                                <button type="submit" class="submit-btn" style="margin: 0; width: auto; padding: 10px 20px;">Blacklist</button>
                             </div>
                         </div>
                     </form>
 
                     <!-- Table -->
-                    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 0.5rem;">
+                    <div style="margin-top: 20px;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr style="border-bottom: 1px solid #ffd700;">
-                                    <th style="padding: 0.75rem; text-align: center; color: #ffd700; font-size: 0.75rem; font-weight: 500; width: 10%; font-family: 'Press Start 2P', cursive;">No.</th>
-                                    <th style="padding: 0.75rem; text-align: left; color: #ffd700; font-size: 0.75rem; font-weight: 500; width: 25%; font-family: 'Press Start 2P', cursive;">Wallet</th>
-                                    <th style="padding: 0.75rem; text-align: left; color: #ffd700; font-size: 0.75rem; font-weight: 500; width: 50%; font-family: 'Press Start 2P', cursive;">Reason</th>
-                                    <th style="padding: 0.75rem; text-align: center; color: #ffd700; font-size: 0.75rem; font-weight: 500; width: 15%; font-family: 'Press Start 2P', cursive;">Action</th>
+                                <tr>
+                                    <th class="setting-label" style="text-align: center; width: 10%;">No.</th>
+                                    <th class="setting-label" style="text-align: left; width: 25%;">Wallet</th>
+                                    <th class="setting-label" style="text-align: left; width: 50%;">Reason</th>
+                                    <th class="setting-label" style="text-align: center; width: 15%;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="blacklistTableBody">
                                 <!-- Sample rows -->
                                 <tr style="border-bottom: 1px solid rgba(255,215,0,0.1);">
-                                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; text-align: center; font-family: 'Press Start 2P', cursive;">1</td>
-                                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">0x1234...5678</td>
-                                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">Sample reason for blacklisting this wallet</td>
-                                    <td style="padding: 0.75rem; text-align: center;">
-                                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.65rem; font-family: 'Press Start 2P', cursive;">Unblacklist</button>
+                                    <td style="padding: 15px; text-align: center;">1</td>
+                                    <td style="padding: 15px;">0x1234...5678</td>
+                                    <td style="padding: 15px;">Sample reason for blacklisting this wallet</td>
+                                    <td style="padding: 15px; text-align: center;">
+                                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" style="width: auto; background: transparent; color: #ffd700; border: 1px solid #ffd700;">Unblacklist</button>
                                     </td>
                                 </tr>
                             </tbody>
