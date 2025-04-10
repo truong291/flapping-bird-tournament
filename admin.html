@@ -726,6 +726,55 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Blacklist Management -->
+            <div class="settings-section" style="margin-top: 2rem;">
+                <div style="background: rgba(0, 0, 0, 0.2); padding: 1.5rem; border-radius: 0.5rem;">
+                    <h3 style="color: #ffd700; font-size: 1.2rem; font-family: 'Press Start 2P', cursive; margin-bottom: 1.5rem;">Blacklist Management</h3>
+                    
+                    <!-- Form -->
+                    <form id="blacklistForm" onsubmit="submitBlacklist(event)" style="margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 2fr auto; gap: 1rem; align-items: end;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #ffd700; font-size: 0.8rem; font-family: 'Press Start 2P', cursive;">Wallet Address</label>
+                                <input type="text" class="setting-input" name="walletAddress" placeholder="0x..." style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.3); border: 1px solid #ffd700; color: #fff; border-radius: 0.5rem; font-family: 'Press Start 2P', cursive; font-size: 0.75rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #ffd700; font-size: 0.8rem; font-family: 'Press Start 2P', cursive;">Reason</label>
+                                <input type="text" class="setting-input" name="reason" placeholder="Enter reason for blacklisting..." style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.3); border: 1px solid #ffd700; color: #fff; border-radius: 0.5rem; font-family: 'Press Start 2P', cursive; font-size: 0.75rem;">
+                            </div>
+                            <div>
+                                <button type="submit" class="control-btn" style="width: 100%; background: #ffd700; color: #000; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; cursor: pointer; font-weight: 500; font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">Blacklist</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Table -->
+                    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 0.5rem;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #ffd700;">
+                                    <th style="padding: 0.75rem; text-align: center; color: #ffd700; font-size: 0.75rem; font-weight: 500; width: 10%; font-family: 'Press Start 2P', cursive;">No.</th>
+                                    <th style="padding: 0.75rem; text-align: left; color: #ffd700; font-size: 0.75rem; font-weight: 500; width: 25%; font-family: 'Press Start 2P', cursive;">Wallet</th>
+                                    <th style="padding: 0.75rem; text-align: left; color: #ffd700; font-size: 0.75rem; font-weight: 500; width: 50%; font-family: 'Press Start 2P', cursive;">Reason</th>
+                                    <th style="padding: 0.75rem; text-align: center; color: #ffd700; font-size: 0.75rem; font-weight: 500; width: 15%; font-family: 'Press Start 2P', cursive;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blacklistTableBody">
+                                <!-- Sample row -->
+                                <tr style="border-bottom: 1px solid rgba(255,215,0,0.1);">
+                                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; text-align: center; font-family: 'Press Start 2P', cursive;">1</td>
+                                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">0x1234...5678</td>
+                                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">Sample reason for blacklisting this wallet</td>
+                                    <td style="padding: 0.75rem; text-align: center;">
+                                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.65rem; font-family: 'Press Start 2P', cursive;">Unblacklist</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1108,6 +1157,85 @@
 
         // Start the timer when page loads
         updateTimer();
+
+        // Add blacklist related functions
+        let blacklistData = []; // This will store all blacklisted wallets
+
+        function submitBlacklist(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const walletAddress = formData.get('walletAddress');
+            const reason = formData.get('reason');
+
+            if (!walletAddress || !walletAddress.trim()) {
+                showAlert('Please enter a wallet address');
+                return;
+            }
+
+            if (!reason || !reason.trim()) {
+                showAlert('Please enter a reason for blacklisting');
+                return;
+            }
+
+            showQuestion(`Do you want to blacklist wallet ${walletAddress}?`, () => {
+                console.log('Blacklisting wallet:', walletAddress, 'Reason:', reason);
+                // Here you would typically send the data to your backend
+                
+                // Add to blacklistData array
+                blacklistData.push({ wallet: walletAddress, reason: reason });
+                
+                // Update table
+                renderBlacklistTable();
+                
+                form.reset();
+                showAlert('Wallet has been blacklisted!');
+            });
+        }
+
+        function unblacklistWallet(btn) {
+            const wallet = btn.getAttribute('data-wallet');
+            const item = blacklistData.find(x => x.wallet === wallet);
+            if (!item) return;
+
+            showQuestion(`Do you want to unblacklist wallet ${wallet}?\nReason for blacklist: ${item.reason}`, () => {
+                console.log('Unblacklisting wallet:', wallet);
+                // Here you would typically send the data to your backend
+                
+                // Remove from blacklistData array
+                blacklistData = blacklistData.filter(x => x.wallet !== wallet);
+                
+                // Update table
+                renderBlacklistTable();
+                
+                showAlert('Wallet has been unblacklisted!');
+            });
+        }
+
+        function renderBlacklistTable() {
+            const tableBody = document.getElementById('blacklistTableBody');
+            tableBody.innerHTML = '';
+            
+            blacklistData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.style = 'border-bottom: 1px solid rgba(255,215,0,0.1);';
+                row.innerHTML = `
+                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; text-align: center; font-family: 'Press Start 2P', cursive;">${index + 1}</td>
+                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">${item.wallet}</td>
+                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">${item.reason}</td>
+                    <td style="padding: 0.75rem; text-align: center;">
+                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${item.wallet}" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.65rem; font-family: 'Press Start 2P', cursive;">Unblacklist</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Initialize with sample data
+        blacklistData = [
+            { wallet: '0x1234...5678', reason: 'Sample reason for blacklisting this wallet' }
+        ];
+        renderBlacklistTable();
     </script>
 </body>
 </html> 
