@@ -102,10 +102,13 @@
     }
 </style>
 
-<script src="../js/wallet-session.js"></script>
 <script>
-    // Xử lý sự kiện click nút Connect Wallet được quản lý bởi WalletSession
-    document.addEventListener('DOMContentLoaded', () => {
+    // Tạo và thêm script wallet-session.js vào DOM
+    const script = document.createElement('script');
+    script.src = '../js/wallet-session.js';
+    script.onload = function() {
+        // Khởi tạo WalletSession sau khi script được tải
         WalletSession.initialize();
-    });
+    };
+    document.head.appendChild(script);
 </script> 
