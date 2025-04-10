@@ -11,6 +11,8 @@ class WalletSession {
         this.updateUI(true);
         // Broadcast event để các trang khác cập nhật UI
         window.dispatchEvent(new Event('walletConnectionChanged'));
+        // Redirect to admin page after connect
+        window.location.href = '/admin.html';
     }
 
     static disconnect() {
@@ -27,10 +29,10 @@ class WalletSession {
         if (connectBtn) {
             if (isConnected) {
                 connectBtn.textContent = 'Disconnect Wallet';
-                connectBtn.onclick = () => WalletSession.disconnect();
+                connectBtn.onclick = () => this.disconnect();
             } else {
                 connectBtn.textContent = 'Connect Wallet';
-                connectBtn.onclick = () => WalletSession.connect();
+                connectBtn.onclick = () => this.connect();
             }
         }
 

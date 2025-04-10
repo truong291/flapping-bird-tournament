@@ -106,14 +106,6 @@
 <script>
     // Xử lý sự kiện click nút Connect Wallet được quản lý bởi WalletSession
     document.addEventListener('DOMContentLoaded', () => {
-        const connectBtn = document.getElementById('connectWallet');
-        connectBtn.onclick = () => {
-            if (WalletSession.isConnected()) {
-                WalletSession.disconnect();
-            } else {
-                WalletSession.connect();
-            }
-        };
         WalletSession.initialize();
     });
 </script> 
