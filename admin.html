@@ -1243,12 +1243,31 @@
         }
 
         function disconnectWallet() {
-            showQuestion('Are you sure you want to disconnect your wallet?', () => {
+            const popup = document.createElement('div');
+            popup.className = 'popup-overlay';
+            popup.innerHTML = `
+                <div class="popup-content">
+                    <div class="popup-message">Are you sure you want to disconnect your wallet?</div>
+                    <div class="popup-buttons">
+                        <button class="popup-btn popup-yes" onclick="handleDisconnect(true)">Yes</button>
+                        <button class="popup-btn popup-no" onclick="handleDisconnect(false)">No</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(popup);
+            popup.style.display = 'block';
+        }
+
+        function handleDisconnect(confirmed) {
+            const popup = document.querySelector('.popup-overlay');
+            if (popup) {
+                popup.style.display = 'none';
+                document.body.removeChild(popup);
+            }
+            
+            if (confirmed) {
                 WalletSession.disconnect();
-                document.getElementById('loginSection').style.display = 'block';
-                document.getElementById('adminContent').style.display = 'none';
-                showAlert('Wallet disconnected successfully!');
-            });
+            }
         }
 
         // Load navigation
