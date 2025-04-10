@@ -513,6 +513,10 @@
                         <div class="stat-value">0.00 BNB</div>
                     </div>
                     <div class="stat-item">
+                        <div class="stat-label">End in</div>
+                        <div class="stat-value" id="roundTimer">00:00:00</div>
+                    </div>
+                    <div class="stat-item">
                         <div class="stat-label">Players</div>
                         <div class="stat-value">0</div>
                     </div>
@@ -1246,6 +1250,33 @@
             // Add more sample data as needed
         ];
         renderBlacklistTable();
+
+        // Add countdown timer function
+        function updateTimer() {
+            const timerElement = document.getElementById('roundTimer');
+            let timeLeft = 3600; // 1 hour in seconds (you can adjust this)
+
+            function formatTime(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+
+            function countdown() {
+                if (timeLeft >= 0) {
+                    timerElement.textContent = formatTime(timeLeft);
+                    timeLeft--;
+                }
+            }
+
+            // Update timer every second
+            countdown();
+            setInterval(countdown, 1000);
+        }
+
+        // Start the timer when page loads
+        updateTimer();
     </script>
 </body>
 </html> 
