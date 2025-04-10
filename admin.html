@@ -761,7 +761,7 @@
                                 </tr>
                             </thead>
                             <tbody id="blacklistTableBody">
-                                <!-- Sample row -->
+                                <!-- Sample rows -->
                                 <tr style="border-bottom: 1px solid rgba(255,215,0,0.1);">
                                     <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; text-align: center; font-family: 'Press Start 2P', cursive;">1</td>
                                     <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">0x1234...5678</td>
@@ -860,11 +860,27 @@
 
         // Submit bonus to jackpot with question
         function submitBonus() {
-            const bonusAmount = document.getElementById('bonusInput').value;
+            const bonusInput = document.getElementById('bonusInput');
+            const bonusAmount = bonusInput.value;
+
+            // Validate empty input
+            if (!bonusAmount || bonusAmount.trim() === '') {
+                showAlert('Please enter bonus amount');
+                return;
+            }
+
+            // Validate number
+            if (isNaN(bonusAmount) || parseFloat(bonusAmount) <= 0) {
+                showAlert('Please enter a valid positive number');
+                return;
+            }
+
             showQuestion(`Do you want to add ${bonusAmount} BNB to jackpot?`, () => {
                 console.log('Adding bonus:', bonusAmount, 'BNB');
                 // Here you would typically send the data to your backend
                 showAlert('Bonus added successfully!');
+                // Clear input after successful submission
+                bonusInput.value = '';
             });
         }
 
