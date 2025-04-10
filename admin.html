@@ -576,27 +576,28 @@
 
                     <!-- Table -->
                     <div style="margin-top: 20px;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr>
-                                    <th class="setting-label" style="text-align: center; width: 10%;">No.</th>
-                                    <th class="setting-label" style="text-align: left; width: 25%;">Wallet</th>
-                                    <th class="setting-label" style="text-align: left; width: 50%;">Reason</th>
-                                    <th class="setting-label" style="text-align: center; width: 15%;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="blacklistTableBody">
-                                <!-- Sample rows -->
-                                <tr style="border-bottom: 1px solid rgba(255,215,0,0.1);">
-                                    <td style="padding: 15px; text-align: center;">1</td>
-                                    <td style="padding: 15px;">0x1234...5678</td>
-                                    <td style="padding: 15px;">Sample reason for blacklisting this wallet</td>
-                                    <td style="padding: 15px; text-align: center;">
-                                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" style="width: auto; background: transparent; color: #ffd700; border: 1px solid #ffd700;">Unblacklist</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div style="margin-bottom: 10px;">
+                            <div style="color: #ffd700; display: grid; grid-template-columns: 80px 200px auto 150px; gap: 10px; padding: 10px;">
+                                <div>No.</div>
+                                <div>Wallet</div>
+                                <div>Reason</div>
+                                <div>Action</div>
+                            </div>
+                        </div>
+                        <div id="blacklistTableBody">
+                            <!-- Sample row -->
+                            <div style="display: grid; grid-template-columns: 80px 200px auto 150px; gap: 10px; padding: 10px; border-bottom: 1px solid rgba(255,215,0,0.1); align-items: center;">
+                                <div style="color: rgba(255,255,255,0.9);">1</div>
+                                <div style="color: rgba(255,255,255,0.9);">0x1234...5678</div>
+                                <div style="color: rgba(255,255,255,0.9);">Sample reason for blacklisting this wallet</div>
+                                <div>
+                                    <button onclick="unblacklistWallet(this)" data-wallet="0x1234...5678" 
+                                        style="background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Press Start 2P', cursive; font-size: 0.7rem;">
+                                        Unblacklist
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1058,15 +1059,18 @@
             tableBody.innerHTML = '';
             
             blacklistData.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.style = 'border-bottom: 1px solid rgba(255,215,0,0.1);';
+                const row = document.createElement('div');
+                row.style = 'display: grid; grid-template-columns: 80px 200px auto 150px; gap: 10px; padding: 10px; border-bottom: 1px solid rgba(255,215,0,0.1); align-items: center;';
                 row.innerHTML = `
-                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; text-align: center; font-family: 'Press Start 2P', cursive;">${index + 1}</td>
-                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">${item.wallet}</td>
-                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">${item.reason}</td>
-                    <td style="padding: 0.75rem; text-align: center;">
-                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${item.wallet}" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.65rem; font-family: 'Press Start 2P', cursive;">Unblacklist</button>
-                    </td>
+                    <div style="color: rgba(255,255,255,0.9);">${index + 1}</div>
+                    <div style="color: rgba(255,255,255,0.9);">${item.wallet}</div>
+                    <div style="color: rgba(255,255,255,0.9);">${item.reason}</div>
+                    <div>
+                        <button onclick="unblacklistWallet(this)" data-wallet="${item.wallet}" 
+                            style="background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Press Start 2P', cursive; font-size: 0.7rem;">
+                            Unblacklist
+                        </button>
+                    </div>
                 `;
                 tableBody.appendChild(row);
             });
