@@ -787,7 +787,6 @@
         </div>
     </div>
 
-    <script src="/src/js/wallet-session.js"></script>
     <script>
         let currentCallback = null;
         let isAlert = false;
@@ -1205,7 +1204,7 @@
                 // Update table
                 const tableBody = document.getElementById('blacklistTableBody');
                 const newRow = document.createElement('tr');
-                newRow.style.borderBottom = '1px solid rgba(255,215,0,0.1)';
+                newRow.style.borderBottom = '1px solid rgba(255,215,0,0.1);';
                 newRow.innerHTML = `
                     <td style="padding: 15px; color: #fff; font-size: 10px; text-align: center;">${newBlacklist.id}</td>
                     <td style="padding: 15px; color: #fff; font-size: 10px;">${newBlacklist.wallet}</td>
@@ -1249,10 +1248,17 @@
             });
         }
 
-        // Initialize wallet session when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            WalletSession.initialize();
-        });
+        // Load navigation
+        fetch('src/components/nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+                // Load wallet session
+                const script = document.createElement('script');
+                script.src = 'src/js/wallet-session.js';
+                script.onload = () => WalletSession.initialize();
+                document.head.appendChild(script);
+            });
     </script>
 </body>
 </html> 
