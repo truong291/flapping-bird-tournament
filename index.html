@@ -211,6 +211,11 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('nav-container').innerHTML = data;
+                // Load wallet session
+                const script = document.createElement('script');
+                script.src = 'src/js/wallet-session.js';
+                script.onload = () => WalletSession.initialize();
+                document.head.appendChild(script);
                 // Mark Home tab as active when loading the page
                 setTimeout(() => {
                     const links = document.querySelectorAll('#tabs a');

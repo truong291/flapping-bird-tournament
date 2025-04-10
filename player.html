@@ -336,7 +336,6 @@
 
     <div id="bottom-container"></div>
 
-    <script src="/src/js/wallet-session.js"></script>
     <script>
         // Dữ liệu mẫu
         const mockData = {
@@ -421,21 +420,16 @@
             });
         }
 
-        // Initialize wallet session when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            WalletSession.initialize();
-            
-            // Redirect if not connected
-            if (!WalletSession.isConnected()) {
-                window.location.href = '/index.html';
-            }
-        });
-
         // Load navigation
         fetch('src/components/nav.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('nav-container').innerHTML = data;
+                // Load wallet session
+                const script = document.createElement('script');
+                script.src = 'src/js/wallet-session.js';
+                script.onload = () => WalletSession.initialize();
+                document.head.appendChild(script);
             });
 
         // Load footer

@@ -1,0 +1,5 @@
+[33m5e680a6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: add blacklist management section
+[33m2e06191[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m remove: blacklist management section
+[33mace4c2d[m fix: update blacklist management layout and fix hover style
+[33m6c71cc0[m refactor: update layout blacklist management with relative units
+[33m279c22c[m add countdown timer and reorder stats
