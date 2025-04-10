@@ -72,21 +72,6 @@
             color: #ff0;
         }
 
-        .disconnect-btn {
-            padding: 8px 15px;
-            background: #f00;
-            border: 2px solid #fff;
-            color: #fff;
-            cursor: pointer;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            border-radius: 5px;
-        }
-
-        .disconnect-btn:hover {
-            background: #a00;
-        }
-
         .balance-info {
             display: flex;
             justify-content: space-between;
@@ -264,8 +249,7 @@
 
         <div class="player-info">
             <div class="wallet-info">
-                <span class="wallet-address">0x1234...5678</span>
-                <button class="disconnect-btn" onclick="disconnectWallet()">Disconnect</button>
+                <span class="wallet-address" id="walletAddress">0x123...abc</span>
             </div>
             <div class="balance-info">
                 <span>Balance:</span>

@@ -491,6 +491,8 @@
     </style>
 </head>
 <body>
+    <div id="nav-container"></div>
+
     <div class="content-container">
         <h1 class="page-title">Admin Panel</h1>
 
@@ -526,14 +528,13 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Dev Earn</div>
-                        <div class="stat-value">0.00 BNB</div>
+                        <div class="stat-value" id="devEarn">0.00 BNB</div>
                     </div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Bonus to Jackpot</div>
-                    <input type="number" id="bonusInput" class="bonus-input" placeholder="0.00 BNB" step="0.01" min="0">
-                    <button onclick="submitBonus()" class="control-btn" style="width: auto; margin-top: 10px;">Submit</button>
-                    <button onclick="disconnectWallet()" class="control-btn" style="width: auto; margin-top: 10px; background: #ff4444;">Disconnect Wallet</button>
+                    <input type="number" id="bonusAmount" class="bonus-input" placeholder="0.00 BNB" step="0.01">
+                    <button class="submit-btn" onclick="addBonus()">Submit</button>
                 </div>
             </div>
 
@@ -776,6 +777,8 @@
         </div>
     </div>
 
+    <div id="bottom-container"></div>
+
     <!-- Update popup HTML -->
     <div class="popup-overlay" id="questionPopup">
         <div class="popup-content">
@@ -858,8 +861,7 @@
 
         // Submit bonus to jackpot with question
         function submitBonus() {
-            const bonusInput = document.getElementById('bonusInput');
-            const bonusAmount = bonusInput.value;
+            const bonusAmount = document.getElementById('bonusAmount').value;
 
             // Validate empty input
             if (!bonusAmount || bonusAmount.trim() === '') {
@@ -878,7 +880,7 @@
                 // Here you would typically send the data to your backend
                 showAlert('Bonus added successfully!');
                 // Clear input after successful submission
-                bonusInput.value = '';
+                document.getElementById('bonusAmount').value = '';
             });
         }
 
@@ -1274,12 +1276,19 @@
         fetch('src/components/nav.html')
             .then(response => response.text())
             .then(data => {
-                document.getElementById('nav-placeholder').innerHTML = data;
+                document.getElementById('nav-container').innerHTML = data;
                 // Load wallet session
                 const script = document.createElement('script');
                 script.src = 'src/js/wallet-session.js';
                 script.onload = () => WalletSession.initialize();
                 document.head.appendChild(script);
+            });
+
+        // Load footer
+        fetch('src/components/bottom.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('bottom-container').innerHTML = data;
             });
     </script>
 </body>
