@@ -787,6 +787,7 @@
         </div>
     </div>
 
+    <script src="/src/js/wallet-session.js"></script>
     <script>
         let currentCallback = null;
         let isAlert = false;
@@ -1241,6 +1242,17 @@
                 showAlert('Wallet has been removed from blacklist!');
             });
         }
+
+        function disconnectWallet() {
+            showQuestion('Are you sure you want to disconnect your wallet?', () => {
+                WalletSession.disconnect();
+            });
+        }
+
+        // Initialize wallet session when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            WalletSession.initialize();
+        });
     </script>
 </body>
 </html> 

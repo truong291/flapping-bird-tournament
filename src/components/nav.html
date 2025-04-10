@@ -102,10 +102,10 @@
     }
 </style>
 
+<script src="/src/js/wallet-session.js"></script>
 <script>
-    // Xử lý sự kiện click nút Connect Wallet
-    document.getElementById('connectWallet').addEventListener('click', function() {
-        // Ở đây bạn có thể thêm logic để kết nối ví
-        alert('Connecting wallet...');
+    // Xử lý sự kiện click nút Connect Wallet được quản lý bởi WalletSession
+    document.addEventListener('DOMContentLoaded', () => {
+        WalletSession.initialize();
     });
 </script> 
