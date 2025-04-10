@@ -1193,63 +1193,54 @@
             }
 
             showQuestion(`Do you want to blacklist wallet ${walletAddress}?`, () => {
-                console.log('Blacklisting wallet:', walletAddress, 'Reason:', reason);
-                // Here you would typically send the data to your backend
-                
                 // Add to blacklistData array
-                blacklistData.push({ wallet: walletAddress, reason: reason });
-                
+                const newBlacklist = {
+                    id: blacklistData.length + 1,
+                    wallet: walletAddress,
+                    reason: reason
+                };
+                blacklistData.push(newBlacklist);
+
                 // Update table
-                renderBlacklistTable();
-                
+                const tableBody = document.getElementById('blacklistTableBody');
+                const newRow = document.createElement('tr');
+                newRow.style.borderBottom = '1px solid rgba(255,215,0,0.1)';
+                newRow.innerHTML = `
+                    <td style="padding: 15px; color: #fff; font-size: 10px; text-align: center;">${newBlacklist.id}</td>
+                    <td style="padding: 15px; color: #fff; font-size: 10px;">${newBlacklist.wallet}</td>
+                    <td style="padding: 15px; color: #fff; font-size: 10px;">${newBlacklist.reason}</td>
+                    <td style="padding: 15px; text-align: center;">
+                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${newBlacklist.wallet}" style="margin: 0; background: transparent; color: #ffd700; border: 1px solid #ffd700;">Unblacklist</button>
+                    </td>
+                `;
+                tableBody.appendChild(newRow);
+
+                // Clear form
                 form.reset();
-                showAlert('Wallet has been blacklisted!');
+                showAlert('Wallet has been blacklisted successfully!');
             });
         }
 
         function unblacklistWallet(btn) {
             const wallet = btn.getAttribute('data-wallet');
-            const item = blacklistData.find(x => x.wallet === wallet);
-            if (!item) return;
-
-            showQuestion(`Do you want to unblacklist wallet ${wallet}?\nReason for blacklist: ${item.reason}`, () => {
-                console.log('Unblacklisting wallet:', wallet);
-                // Here you would typically send the data to your backend
-                
+            showQuestion(`Do you want to remove ${wallet} from blacklist?`, () => {
                 // Remove from blacklistData array
-                blacklistData = blacklistData.filter(x => x.wallet !== wallet);
+                blacklistData = blacklistData.filter(item => item.wallet !== wallet);
                 
-                // Update table
-                renderBlacklistTable();
+                // Remove row from table
+                const row = btn.closest('tr');
+                row.remove();
                 
-                showAlert('Wallet has been unblacklisted!');
+                // Update remaining row numbers
+                const tableBody = document.getElementById('blacklistTableBody');
+                const rows = tableBody.getElementsByTagName('tr');
+                for (let i = 0; i < rows.length; i++) {
+                    rows[i].cells[0].textContent = i + 1;
+                }
+                
+                showAlert('Wallet has been removed from blacklist!');
             });
         }
-
-        function renderBlacklistTable() {
-            const tableBody = document.getElementById('blacklistTableBody');
-            tableBody.innerHTML = '';
-            
-            blacklistData.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.style = 'border-bottom: 1px solid rgba(255,215,0,0.1);';
-                row.innerHTML = `
-                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; text-align: center; font-family: 'Press Start 2P', cursive;">${index + 1}</td>
-                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">${item.wallet}</td>
-                    <td style="padding: 0.75rem; color: rgba(255,255,255,0.9); font-size: 0.75rem; font-family: 'Press Start 2P', cursive;">${item.reason}</td>
-                    <td style="padding: 0.75rem; text-align: center;">
-                        <button class="control-btn" onclick="unblacklistWallet(this)" data-wallet="${item.wallet}" style="width: 100%; background: transparent; color: #ffd700; border: 1px solid #ffd700; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.65rem; font-family: 'Press Start 2P', cursive;">Unblacklist</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Initialize with sample data
-        blacklistData = [
-            { wallet: '0x1234...5678', reason: 'Sample reason for blacklisting this wallet' }
-        ];
-        renderBlacklistTable();
     </script>
 </body>
 </html> 
